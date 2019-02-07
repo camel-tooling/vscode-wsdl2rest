@@ -6,6 +6,9 @@
 This preview release of the extension adds wsdl2rest support to [Visual Studio Code](https://code.visualstudio.com/) including:
 * Support for taking an existing WSDL file for a working SOAP service and wrapping it in a Camel Rest DSL configuration for REST-style access.
 
+Simple preview:
+![Simple preview](./images/vscode-wsdl2rest-preview.gif "Simple preview")
+
 ## Contact Us
 If you run into any issues or have suggestions, please file [issues and suggestions on GitHub].
 
