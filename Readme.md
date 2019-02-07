@@ -1,4 +1,4 @@
-![GitHub tag]()
+[![GitHub tag](https://img.shields.io/github/tag/bfitzpat/vscode-wsdl2rest.svg?style=plastic)]()
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)]()
 [![Gitter](https://img.shields.io/gitter/room/camel-tooling/Lobby.js.svg)](https://gitter.im/camel-tooling/Lobby)
 
