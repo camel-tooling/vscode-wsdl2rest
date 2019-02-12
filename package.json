@@ -23,8 +23,8 @@
         ]
     },
     "scripts": {
-        "vscode:prepublish": "npm run compile",
-        "compile": "tsc -p ./",
+        "vscode:prepublish": "npm run compile && cp ./wsdl2rest/target/wsdl2rest-fatjar-0.0.1-SNAPSHOT.jar ./out && cp -a ./wsdl2rest/config/. ./out/config/",
+        "compile": "mvn install -f ./wsdl2rest/pom.xml && tsc -p ./",
         "watch": "tsc -watch -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install",
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
@@ -35,5 +35,16 @@
         "tslint": "^5.8.0",
         "@types/node": "^7.0.43",
         "@types/mocha": "^2.2.42"
+    },
+    "dependencies": {
+        "child_process": "^1.0.2",
+        "file-url": "^2.0.2",
+        "fs": "0.0.1-security",
+        "fs-extra": "^7.0.1",
+        "path": "^0.12.7",
+        "soap": "^0.25.0"
+    },
+    "directories": {
+        "wsdl2rest": "wsdl2rest"
     }
 }
