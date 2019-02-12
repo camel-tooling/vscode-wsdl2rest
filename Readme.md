@@ -13,7 +13,7 @@ Simple preview:
 If you run into any issues or have suggestions, please file [issues and suggestions on GitHub].
 
 ## How to install
-The wsdl2rest Extension is available from the [VSCode Marketplace].
+(When) the wsdl2rest Extension is available from the [VSCode Marketplace].
 
 * Install VS Code
 * Open Extensions View (Ctrl+Shift+X)
