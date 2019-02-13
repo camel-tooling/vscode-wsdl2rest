@@ -15,7 +15,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	storagePath = vscode.workspace.rootPath;
 
-	wsdl2restJarPath = context.asAbsolutePath(path.join('jars', 'wsdl2rest-fatjar-0.0.1-SNAPSHOT.jar'));
+	wsdl2restJarPath = context.asAbsolutePath(path.join('wsdl2rest', 'target', 'wsdl2rest-fatjar-0.0.1-SNAPSHOT.jar'));
 	logPath = context.asAbsolutePath(path.join('wsdl2rest', 'config', 'logging.properties'));
 	console.log(wsdl2restJarPath);
 
@@ -26,7 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(disposable);
 }
 
-async function callWsdl2Rest(outputDirectory:any, wsdlUrl:any, dsl:any, jaxrs:any, jaxws:any, isDebug:any) {
+async function callWsdl2Rest(outputDirectory:any, wsdlUrl:any, dsl:any, jaxrs:any, jaxws:any, isDebug:boolean) {
 	let logUrl = fileUrl(logPath);
 
 	let actualJavaOutDirectory:String = outputDirectory;
