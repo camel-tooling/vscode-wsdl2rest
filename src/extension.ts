@@ -7,14 +7,16 @@ import * as fs from 'fs-extra';
 const fileUrl = require('file-url');
 const exec = require('child_process').exec;
 
-var wsdl2restJarPath;
+var wsdl2restJarPath :string;
+var logPath :string;
 var storagePath;
 
 export function activate(context: vscode.ExtensionContext) {
 
 	storagePath = vscode.workspace.rootPath;
 
-	wsdl2restJarPath = context.asAbsolutePath(path.join('wsdl2rest-impl-fatjar-vscode-0.0.1-SNAPSHOT.jar'));
+	wsdl2restJarPath = context.asAbsolutePath(path.join('jars', 'wsdl2rest-fatjar-0.0.1-SNAPSHOT.jar'));
+	logPath = context.asAbsolutePath(path.join('wsdl2rest', 'config', 'logging.properties'));
 	console.log(wsdl2restJarPath);
 
 	let disposable = vscode.commands.registerCommand('extension.wsdl2rest', () => {
@@ -25,10 +27,6 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 async function callWsdl2Rest(outputDirectory:any, wsdlUrl:any, dsl:any, jaxrs:any, jaxws:any, isDebug:any) {
-	let wsdl2restdir = path.join(__dirname);
-	let jar = findWsdl2RestJar(wsdl2restdir);
-
-	let logPath = path.join(wsdl2restdir, 'config', 'logging.properties');
 	let logUrl = fileUrl(logPath);
 
 	let actualJavaOutDirectory:String = outputDirectory;
@@ -70,7 +68,7 @@ async function callWsdl2Rest(outputDirectory:any, wsdlUrl:any, dsl:any, jaxrs:an
 	// build the java command with classpath, class name, and the passed parameters
 	var cmdString = 'java '
 		+ ' -Dlog4j.configuration=' + logUrl
-		+ ' -jar ' + jar
+		+ ' -jar ' + wsdl2restJarPath
 		+ ' --wsdl ' + wsdlFileUrl
 		+ ' --out ' + outPath;
 
@@ -146,16 +144,6 @@ async function doWsdl2Rest(context: vscode.ExtensionContext) {
 	} catch (error) {
 		vscode.window.showErrorMessage("Error while processing wsdl2rest: " + error);
 	}
-}
-
-function findWsdl2RestJar(testFolder:any) {
-    const f = fs.readdirSync(testFolder).find(f => path.extname(f) === '.jar');
-    if (typeof f === "undefined") {
-        return null;
-    } else {
-        var fullPath = path.join(testFolder, f);
-        return fullPath;
-    }
 }
 
 // this method is called when your extension is deactivated
