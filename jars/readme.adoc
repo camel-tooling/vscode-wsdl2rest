@@ -1,0 +1,2 @@
+The jar is currently pushed to Source Code management system.
+It needs to be built from ../wsdl2rest by calling mvn clean install. It will generate a file of the same name in target folder. it is this file to be copied in this jars folder.
