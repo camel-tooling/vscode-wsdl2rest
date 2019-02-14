@@ -7,6 +7,7 @@ import * as requirements from './requirements';
 import * as utils from './utils';
 import { TextDecoder } from 'util';
 import * as vscode from 'vscode';
+import * as os from 'os';
 
 const fileUrl = require('file-url');
 
@@ -20,7 +21,6 @@ let dsl: string;
 let jaxrs: string;
 let jaxws: string;
 
-
 export function activate(context: vscode.ExtensionContext) {
 	
 	wsdl2restExecutablePath = context.asAbsolutePath(path.join('./', 'jars/','wsdl2rest.jar'));
@@ -32,11 +32,11 @@ export function activate(context: vscode.ExtensionContext) {
 				callWsdl2Rest(wsdl2restExecutablePath)
 					.then( success => {
 						if (!success) {
-							vscode.window.showErrorMessage("Unable to create the WSDL2Rest files.");
+							vscode.window.showErrorMessage("Unable to create the Wsdl2Rest files.");
 						}
 					})
 					.catch(err => {
-						console.error("WSDL2Rest execution return code: " + err);
+						console.error("Wsdl2Rest execution return code: " + err);
 					});
 			})
 			.catch(err => {
@@ -109,7 +109,10 @@ function askForUserInputs(): Promise<any> {
 
 function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 	return new Promise( (resolve, reject) => {
-		let storagePath: string = vscode.workspace.rootPath;  // is undefined for some unknown reason
+		let storagePath: string = vscode.workspace.rootPath; // is undefined for some unknown reason
+		if (!storagePath) {
+			storagePath = getTempWorkspace();
+		}
 
 		if (outputDirectory.endsWith('/java')) {
 			outputDirectory = outputDirectory.substring(0, outputDirectory.indexOf('/java'));
@@ -122,7 +125,7 @@ function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 		}
 		
 		if (!fs.existsSync(outPath)) {
-			vscode.window.showInformationMessage(`Creating WSDL2Rest Java output directory: ` + outPath);
+			vscode.window.showInformationMessage(`Creating Wsdl2Rest Java output directory: ` + outPath);
 			fs.ensureDirSync(outPath);
 		}
 		
@@ -149,28 +152,37 @@ function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 
 		requirements.resolveRequirements()
 			.then(requirements => {
-				let log4jConfigPath: string = fileUrl(wsdl2restExecutablePath.substring(0, wsdl2restExecutablePath.lastIndexOf(path.sep)+1) + "log4j.properties");
+				let originalLog4JProps = wsdl2restExecutablePath.substring(0, wsdl2restExecutablePath.lastIndexOf(path.sep)+1) + "log4j.properties";
+				let newLogsFolder = storagePath + path.sep + 'config';
+				let newLog4JProps = newLogsFolder + path.sep + 'logging.properties';
+				fs.copySync(path.resolve(originalLog4JProps), newLog4JProps);
+				utils.printDebug("New config folder: " + newLogsFolder);
+
+				let log4jConfigPath: string = fileUrl(newLog4JProps);
 				utils.printDebug("Log4J Config: " + log4jConfigPath);
 				javaExecutablePath = path.resolve(requirements.java_home + '/bin/java');
+
+				let contextType = isBlueprint ? "--blueprint-context" : "--camel-context";
+				let args:string[];
+				args = [ "-Dlog4j.configuration=" + log4jConfigPath, 
+					"-jar", wsdl2restExecutablePath,
+					"--wsdl", wsdlFileUri,
+					"--out", outPath,
+					contextType, restContextPath];
+				if (jaxrs) {
+					args.push("--jaxrs");
+					args.push(jaxrs);
+				}
+				if (jaxrs) {
+					args.push("--jaxws");
+					args.push(jaxws);
+				}
+
 				utils.printDebug("Java Binary: " + javaExecutablePath);
-				utils.printDebug("WSDL2Rest JAR: " + wsdl2restExecutablePath);
-				utils.printDebug("Java Call: " + javaExecutablePath + " " + log4jConfigPath + " -jar " + wsdl2restExecutablePath);
-				outputChannel.append("Executing WSDL2Rest...\n");
-				wsdl2restProcess = child_process.spawn(javaExecutablePath, [
-					"-Dlog4j.configuration=" + log4jConfigPath, 
-					"-jar", 
-					wsdl2restExecutablePath, 
-					"--wsdl",
-					wsdlFileUri,
-					"--out",
-					outPath,
-					isBlueprint ? "--blueprint-context" : "--camel-context",
-					restContextPath,
-					jaxrs ? "--jaxrs" : "", 
-					jaxrs ? jaxrs : "",
-					jaxws ? "--jaxws" : "", 
-					jaxws ? jaxws : ""
-				]);
+				utils.printDebug("Wsdl2Rest JAR: " + wsdl2restExecutablePath);
+				utils.printDebug("Java Call: " + javaExecutablePath + "\n\t" + args);
+				outputChannel.append("Executing Wsdl2Rest...\n");
+				wsdl2restProcess = child_process.spawn(javaExecutablePath, args);
 
 				wsdl2restProcess.stdout.on('data', function (data) {
 					outputChannel.append(`${data} \n`);
@@ -192,4 +204,18 @@ function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 				});				
 			});
 	});
+}
+
+function getTempWorkspace() {
+	return path.resolve(os.tmpdir(),'vscodesws_'+makeRandomHexString(5));
+}
+
+function makeRandomHexString(length) {
+	var chars = ['0', '1', '2', '3', '4', '5', '6', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
+	var result = '';
+	for (var i = 0; i < length; i++) {
+		var idx = Math.floor(chars.length * Math.random());
+		result += chars[idx];
+	}
+	return result;
 }
