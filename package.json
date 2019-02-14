@@ -23,7 +23,7 @@
         ]
     },
     "scripts": {
-        "vscode:prepublish": "npm run clean && npm run fatjar && npm run compile",
+        "vscode:prepublish": "npm run clean && npm run fatjar && npm install && npm run compile",
         "fatjar": "mvn install -f ./wsdl2rest/pom.xml",
         "clean": "rm -rf out || rmdir out /s /q",
         "compile": "tsc -p ./",

@@ -15,8 +15,8 @@ fs.access(destDir, err => {
 	if (err) {
 		fs.mkdirSync(destDir);
 	}
-	copyFile(src, path.join(destDir, "wdsl2rest.jar"));
-	copyFile(configSrc, path.join(destDir, configFileName));
+	copyFile(src, path.join(destDir, "wsdl2rest.jar"));
+	copyFile(configSrc, path.join(destDir, "log4j.properties"));
 });
 
 function copyFile(src, dest) {
