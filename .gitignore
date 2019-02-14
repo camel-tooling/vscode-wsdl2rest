@@ -3,3 +3,5 @@ node_modules
 .vscode-test/
 *.vsix
 wsdl2rest/target/
+*.log
+

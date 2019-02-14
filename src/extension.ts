@@ -4,177 +4,192 @@ import * as child_process from 'child_process';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as requirements from './requirements';
+import * as utils from './utils';
 import { TextDecoder } from 'util';
 import * as vscode from 'vscode';
 
 const fileUrl = require('file-url');
-const exec = require('child_process').exec;
 
-const options: vscode.OpenDialogOptions = {
-	canSelectMany: false,
-	openLabel: 'Open WSDL File',
-	filters: {
-		'WSDL files': ['wsdl'],
-		'All files': ['*']
-	}
-};
+let outputChannel: vscode.OutputChannel;
+let wsdl2restProcess: child_process.ChildProcess;
+let javaExecutablePath: string;
+let wsdl2restExecutablePath: string;
+let wsdlFileUri: string;
+let outputDirectory: string;
+let dsl: string;
+let jaxrs: string;
+let jaxws: string;
+
 
 export function activate(context: vscode.ExtensionContext) {
 	
-	let wsdl2restExecutablePath = context.asAbsolutePath(path.join('jars','wsdl2rest.jar'));
+	wsdl2restExecutablePath = context.asAbsolutePath(path.join('./', 'jars/','wsdl2rest.jar'));
+	outputChannel = vscode.window.createOutputChannel("WSDL2Rest");
 
 	context.subscriptions.push(vscode.commands.registerCommand('extension.wsdl2rest', () => {
-		doWsdl2Rest(wsdl2restExecutablePath);
+		askForUserInputs()
+			.then( () => {
+				callWsdl2Rest(wsdl2restExecutablePath)
+					.then( success => {
+						if (!success) {
+							vscode.window.showErrorMessage("Unable to create the WSDL2Rest files.");
+						}
+					})
+					.catch(err => {
+						console.error("WSDL2Rest execution return code: " + err);
+					});
+			})
+			.catch(err => {
+				console.error("Error retrieving the required user inputs. " + err);
+			});
 	}));
 }
 
-async function doWsdl2Rest(wsdl2restExecutablePath: string) {
-	try {
-		let wsdlFileUri: any = await vscode.window.showOpenDialog(options);
-		if (wsdlFileUri) {
-			let dslChoice = await vscode.window.showQuickPick(
-				['Spring', 'Blueprint'],
+function askForUserInputs(): Promise<any> {
+	return new Promise( async (resolve, reject) => {
+		try {
+			let fileUri = await vscode.window.showOpenDialog(utils.Options);
+			if (fileUri && Array.isArray(fileUri)) {
+				wsdlFileUri = fileUri[0] + "";
+			} else {
+				reject("WSDL not valid.");
+			}
+			utils.printDebug("WSDL File URI: " + wsdlFileUri);
+
+			dsl = await vscode.window.showQuickPick(
+				[
+					utils.DslType.Spring, 
+					utils.DslType.Blueprint
+				],
 				{
-					placeHolder:
-						'Specify which DSL to generate the Camel configuration for'
+					placeHolder: 'Specify which DSL to generate the Camel configuration for'
 				}
 			);
-			if (dslChoice) {
-				vscode.window.showInformationMessage(`DSL Choice: ${dslChoice}`);
-				let outputDir = await vscode.window.showInputBox({
-					prompt: 'Output Directory',
-					placeHolder: 'Enter the output directory for generated artifacts',
-					value: 'src/main/java'
-				});
-				if (outputDir) {
-					let jaxWs = await vscode.window.showInputBox({
-						prompt: 'JAXWS Endpoint',
-						placeHolder: 'Enter the address for the running jaxws endpoint',
-						value: 'http://localhost:8080/somepath'
-					});
-					if (jaxWs) {
-						let jaxRs = await vscode.window.showInputBox({
-							prompt: 'JAXRS Endpoint',
-							placeHolder: 'Enter the address for the jaxrs endpoint',
-							value: 'http://localhost:8081/jaxrs'
-						});
-						if (jaxRs) {
-							await callWsdl2Rest(
-								wsdl2restExecutablePath,
-								outputDir,
-								wsdlFileUri.toString(),
-								dslChoice,
-								jaxRs,
-								jaxWs,
-								true
-							);
-						}
-					}
-				}
+			if (!dsl) {
+				reject("No valid DSL Type selected.");
 			}
+			utils.printDebug("DSL Type: " + dsl);
+
+			outputDirectory = await vscode.window.showInputBox({
+				prompt: 'Output Directory',
+				placeHolder: 'Enter the output directory for generated artifacts',
+				value: 'src/main/java'
+			});
+			if (!outputDirectory) {
+				reject("No valid output folder specified.");
+			}
+			utils.printDebug("Ouput Folder: " + outputDirectory);
+
+			jaxws = await vscode.window.showInputBox({
+				prompt: 'JAXWS Endpoint',
+				placeHolder: 'Enter the address for the running jaxws endpoint',
+				value: 'http://localhost:8080/somepath'
+			});
+			if (!jaxws) {
+				reject("No valid JAXWS Endpoint soecified.");
+			}
+			utils.printDebug("JAXWS Endpoint: " + jaxws);
+
+			jaxrs = await vscode.window.showInputBox({
+				prompt: 'JAXRS Endpoint',
+				placeHolder: 'Enter the address for the jaxrs endpoint',
+				value: 'http://localhost:8081/jaxrs'
+			});
+			if (!jaxrs) {
+				reject("No valid JAXRS endpoint specified.");
+			}
+			utils.printDebug("JAXRS Endpoint: " + jaxrs);
+			resolve();
+		} catch (error) {
+			console.error(error);
+			reject(error);
 		}
-	} catch (error) {
-		vscode.window.showErrorMessage('Error while processing wsdl2rest: ' + error);
-	}
+	});
 }
 
-async function callWsdl2Rest(
-	wsdl2restExecutablePath: string,
-	outputDirectory: any,
-	wsdlUrl: any,
-	dsl: any,
-	jaxrs: any,
-	jaxws: any,
-	isDebug: boolean
-) {
-	let storagePath = vscode.workspace.rootPath;
+function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
+	return new Promise( (resolve, reject) => {
+		let storagePath: string = vscode.workspace.rootPath;  // is undefined for some unknown reason
 
-	let actualJavaOutDirectory: string = outputDirectory;
-	if (actualJavaOutDirectory.endsWith('/java')) {
-		actualJavaOutDirectory = actualJavaOutDirectory.substring(0, actualJavaOutDirectory.indexOf('/java'));
-	}
-	let outPath: string = path.join(storagePath, actualJavaOutDirectory.toString());
-	let wsdlFileUrl: string;
-	if (wsdlUrl.startsWith('http')) {
-		wsdlFileUrl = wsdlUrl;
-	} else if (!wsdlUrl.startsWith('file:')) {
-		wsdlFileUrl = fileUrl(wsdlUrl);
-	} else {
-		wsdlFileUrl = wsdlUrl;
-	}
+		if (outputDirectory.endsWith('/java')) {
+			outputDirectory = outputDirectory.substring(0, outputDirectory.indexOf('/java'));
+		}
 
-	if (!fs.existsSync(outPath.toString())) {
-		console.log(`Creating wsdl2rest java output directory`);
-		await fs.ensureDir(outPath.toString());
-	}
+		let outPath: string = path.join(storagePath, outputDirectory);
+		
+		if (!wsdlFileUri.startsWith('file:')) {
+			wsdlFileUri = fileUrl(wsdlFileUri);
+		}
+		
+		if (!fs.existsSync(outPath)) {
+			vscode.window.showInformationMessage(`Creating WSDL2Rest Java output directory: ` + outPath);
+			fs.ensureDirSync(outPath);
+		}
+		
+		var restContextPath;
+		var rawContextPath: any;
 
-	var restContextPath;
-	var rawContextPath: any;
+		const isBlueprint: boolean = dsl === utils.DslType.Blueprint;
+		const isSpringBoot: boolean = dsl === utils.DslType.SpringBoot;
+		const isSpring: boolean = dsl === utils.DslType.Spring;
 
-	const isBlueprint: boolean = dsl.match(/blueprint/i);
-	const isSpringBoot: boolean = dsl.match(/spring-boot/i);
-	const isSpring: boolean = dsl.match(/spring/i);
+		if (isBlueprint) {
+			rawContextPath = 'src/main/resources/OSGI-INF/blueprint/blueprint.xml';
+		} else if (isSpringBoot) {
+			rawContextPath = 'src/main/resources/camel-context.xml';
+		} else if (isSpring) {
+			rawContextPath = 'src/main/resources/META-INF/spring/camel-context.xml';
+		}
+		restContextPath = path.join(storagePath, rawContextPath);
 
-	if (isBlueprint) {
-		rawContextPath = 'src/main/resources/OSGI-INF/blueprint/blueprint.xml';
-	} else if (isSpringBoot) {
-		rawContextPath = 'src/main/resources/camel-context.xml';
-	} else if (isSpring) {
-		rawContextPath = 'src/main/resources/META-INF/spring/camel-context.xml';
-	}
-	restContextPath = path.join(storagePath, rawContextPath);
+		if (outputChannel) {
+			outputChannel.clear();
+			outputChannel.show();
+		}
 
-	// build the java command with classpath, class name, and the passed parameters
-	var cmdString = 
-		' --wsdl ' +
-		wsdlFileUrl +
-		' --out ' +
-		outPath;
-
-	if (isBlueprint) {
-		cmdString = cmdString + ' --blueprint-context ' + restContextPath;
-	} else {
-		cmdString = cmdString + ' --camel-context ' + restContextPath;
-	}
-
-	if (jaxrs) {
-		cmdString = cmdString + ' --jaxrs ' + jaxrs;
-	}
-	if (jaxws) {
-		cmdString = cmdString + ' --jaxws ' + jaxws;
-	}
-	vscode.window.showInformationMessage('Calling wsdl2rest');
-	if (isDebug) {
-		vscode.window.showInformationMessage('   command used: ' + cmdString);
-	}
-	return new Promise((resolve, reject) => {
-		let outputChannel = vscode.window.createOutputChannel("WSDL2Rest");
 		requirements.resolveRequirements()
 			.then(requirements => {
-				let javaExecutablePath = path.resolve(requirements.java_home + '/bin/java');
-				let process = child_process.spawn(javaExecutablePath, ['-jar', wsdl2restExecutablePath, cmdString]);
-				process.on("close", (code, signal) => {
-					if (outputChannel) {
-						try {
-							outputChannel.dispose(); // maybe think about not disposing it to let people read what went wrong?
-						} catch (error) {
-							reject(error);
-						}
-					}
+				let log4jConfigPath: string = fileUrl(wsdl2restExecutablePath.substring(0, wsdl2restExecutablePath.lastIndexOf(path.sep)+1) + "log4j.properties");
+				utils.printDebug("Log4J Config: " + log4jConfigPath);
+				javaExecutablePath = path.resolve(requirements.java_home + '/bin/java');
+				utils.printDebug("Java Binary: " + javaExecutablePath);
+				utils.printDebug("WSDL2Rest JAR: " + wsdl2restExecutablePath);
+				utils.printDebug("Java Call: " + javaExecutablePath + " " + log4jConfigPath + " -jar " + wsdl2restExecutablePath);
+				outputChannel.append("Executing WSDL2Rest...\n");
+				wsdl2restProcess = child_process.spawn(javaExecutablePath, [
+					"-Dlog4j.configuration=" + log4jConfigPath, 
+					"-jar", 
+					wsdl2restExecutablePath, 
+					"--wsdl",
+					wsdlFileUri,
+					"--out",
+					outPath,
+					isBlueprint ? "--blueprint-context" : "--camel-context",
+					restContextPath,
+					jaxrs ? "--jaxrs" : "", 
+					jaxrs ? jaxrs : "",
+					jaxws ? "--jaxws" : "", 
+					jaxws ? jaxws : ""
+				]);
+
+				wsdl2restProcess.stdout.on('data', function (data) {
+					outputChannel.append(`${data} \n`);
+					utils.printDebug(data);
+				});
+				wsdl2restProcess.stderr.on('data', function (data) {
+					outputChannel.append(`${data} \n`);
+					utils.printDebug(data);
+				});
+				wsdl2restProcess.on("close", (code, signal) => {
 					if (code === 0) {
 						vscode.window.showInformationMessage('Created CXF artifacts for specified WSDL at ' + outputDirectory);
 						vscode.window.showInformationMessage('Created ' + rawContextPath);
-						resolve();
 					} else {
 						vscode.window.showErrorMessage(`Wsdl2Rest did not generate artifacts successfully - please check the output channel for details`);
-						reject(code);
 					}
-				});
-				process.stdout.on('data', function (data) {
-					let dec = new TextDecoder("utf-8");
-					let text = dec.decode(data);
-					outputChannel.append(text);
-				});
+					outputChannel.append("\nProcess finished. Return code " + code + ".\n\n");
+					resolve(code === 0);
+				});				
 			});
 	});
 }
