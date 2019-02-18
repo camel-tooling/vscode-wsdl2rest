@@ -109,101 +109,106 @@ function askForUserInputs(): Promise<any> {
 
 function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 	return new Promise( (resolve, reject) => {
-		let storagePath: string = vscode.workspace.rootPath; // is undefined for some unknown reason
-		if (!storagePath) {
-			storagePath = getTempWorkspace();
-		}
+		try {
+			let storagePath: string = vscode.workspace.rootPath; // is undefined for some unknown reason
+			if (!storagePath) {
+				storagePath = getTempWorkspace();
+			}
 
-		if (outputDirectory.endsWith('/java')) {
-			outputDirectory = outputDirectory.substring(0, outputDirectory.indexOf('/java'));
-		}
+			if (outputDirectory.endsWith('/java')) {
+				outputDirectory = outputDirectory.substring(0, outputDirectory.indexOf('/java'));
+			}
 
-		let outPath: string = path.join(storagePath, outputDirectory);
-		
-		if (!wsdlFileUri.startsWith('file:')) {
-			wsdlFileUri = fileUrl(wsdlFileUri);
-		}
-		
-		if (!fs.existsSync(outPath)) {
-			vscode.window.showInformationMessage(`Creating Wsdl2Rest Java output directory: ` + outPath);
-			fs.ensureDirSync(outPath);
-		}
-		
-		var restContextPath;
-		var rawContextPath: any;
+			let outPath: string = path.join(storagePath, outputDirectory);
+			
+			if (!wsdlFileUri.startsWith('file:')) {
+				wsdlFileUri = fileUrl(wsdlFileUri);
+			}
+			
+			if (!fs.existsSync(outPath)) {
+				vscode.window.showInformationMessage(`Creating Wsdl2Rest Java output directory: ` + outPath);
+				fs.ensureDirSync(outPath);
+			}
+			
+			var restContextPath;
+			var rawContextPath: any;
 
-		const isBlueprint: boolean = dsl === utils.DslType.Blueprint;
-		const isSpringBoot: boolean = dsl === utils.DslType.SpringBoot;
-		const isSpring: boolean = dsl === utils.DslType.Spring;
+			const isBlueprint: boolean = dsl === utils.DslType.Blueprint;
+			const isSpringBoot: boolean = dsl === utils.DslType.SpringBoot;
+			const isSpring: boolean = dsl === utils.DslType.Spring;
 
-		if (isBlueprint) {
-			rawContextPath = 'src/main/resources/OSGI-INF/blueprint/blueprint.xml';
-		} else if (isSpringBoot) {
-			rawContextPath = 'src/main/resources/camel-context.xml';
-		} else if (isSpring) {
-			rawContextPath = 'src/main/resources/META-INF/spring/camel-context.xml';
-		}
-		restContextPath = path.join(storagePath, rawContextPath);
+			if (isBlueprint) {
+				rawContextPath = 'src/main/resources/OSGI-INF/blueprint/blueprint.xml';
+			} else if (isSpringBoot) {
+				rawContextPath = 'src/main/resources/camel-context.xml';
+			} else if (isSpring) {
+				rawContextPath = 'src/main/resources/META-INF/spring/camel-context.xml';
+			}
+			restContextPath = path.join(storagePath, rawContextPath);
 
-		if (outputChannel) {
-			outputChannel.clear();
-			outputChannel.show();
-		}
+			if (outputChannel) {
+				outputChannel.clear();
+				outputChannel.show();
+			}
 
-		requirements.resolveRequirements()
-			.then(requirements => {
-				let originalLog4JProps = wsdl2restExecutablePath.substring(0, wsdl2restExecutablePath.lastIndexOf(path.sep)+1) + "log4j.properties";
-				let newLogsFolder = storagePath + path.sep + 'config';
-				let newLog4JProps = newLogsFolder + path.sep + 'logging.properties';
-				fs.copySync(path.resolve(originalLog4JProps), newLog4JProps);
-				utils.printDebug("New config folder: " + newLogsFolder);
+			requirements.resolveRequirements()
+				.then(requirements => {
+					let originalLog4JProps = wsdl2restExecutablePath.substring(0, wsdl2restExecutablePath.lastIndexOf(path.sep)+1) + "log4j.properties";
+					let newLogsFolder = storagePath + path.sep + 'config';
+					let newLog4JProps = newLogsFolder + path.sep + 'logging.properties';
+					fs.copySync(path.resolve(originalLog4JProps), newLog4JProps);
+					utils.printDebug("New config folder: " + newLogsFolder);
 
-				let log4jConfigPath: string = fileUrl(newLog4JProps);
-				utils.printDebug("Log4J Config: " + log4jConfigPath);
-				javaExecutablePath = path.resolve(requirements.java_home + '/bin/java');
+					let log4jConfigPath: string = fileUrl(newLog4JProps);
+					utils.printDebug("Log4J Config: " + log4jConfigPath);
+					javaExecutablePath = path.resolve(requirements.java_home + '/bin/java');
 
-				let contextType = isBlueprint ? "--blueprint-context" : "--camel-context";
-				let args:string[];
-				args = [ "-Dlog4j.configuration=" + log4jConfigPath, 
-					"-jar", wsdl2restExecutablePath,
-					"--wsdl", wsdlFileUri,
-					"--out", outPath,
-					contextType, restContextPath];
-				if (jaxrs) {
-					args.push("--jaxrs");
-					args.push(jaxrs);
-				}
-				if (jaxrs) {
-					args.push("--jaxws");
-					args.push(jaxws);
-				}
-
-				utils.printDebug("Java Binary: " + javaExecutablePath);
-				utils.printDebug("Wsdl2Rest JAR: " + wsdl2restExecutablePath);
-				utils.printDebug("Java Call: " + javaExecutablePath + "\n\t" + args);
-				outputChannel.append("Executing Wsdl2Rest...\n");
-				wsdl2restProcess = child_process.spawn(javaExecutablePath, args);
-
-				wsdl2restProcess.stdout.on('data', function (data) {
-					outputChannel.append(`${data} \n`);
-					utils.printDebug(data);
-				});
-				wsdl2restProcess.stderr.on('data', function (data) {
-					outputChannel.append(`${data} \n`);
-					utils.printDebug(data);
-				});
-				wsdl2restProcess.on("close", (code, signal) => {
-					if (code === 0) {
-						vscode.window.showInformationMessage('Created CXF artifacts for specified WSDL at ' + outputDirectory);
-						vscode.window.showInformationMessage('Created ' + rawContextPath);
-					} else {
-						vscode.window.showErrorMessage(`Wsdl2Rest did not generate artifacts successfully - please check the output channel for details`);
+					let contextType = isBlueprint ? "--blueprint-context" : "--camel-context";
+					let args:string[];
+					args = [ "-Dlog4j.configuration=" + log4jConfigPath, 
+						"-jar", wsdl2restExecutablePath,
+						"--wsdl", wsdlFileUri,
+						"--out", outPath,
+						contextType, restContextPath];
+					if (jaxrs) {
+						args.push("--jaxrs");
+						args.push(jaxrs);
 					}
-					outputChannel.append("\nProcess finished. Return code " + code + ".\n\n");
-					resolve(code === 0);
-				});				
-			});
-	});
+					if (jaxrs) {
+						args.push("--jaxws");
+						args.push(jaxws);
+					}
+
+					utils.printDebug("Java Binary: " + javaExecutablePath);
+					utils.printDebug("Wsdl2Rest JAR: " + wsdl2restExecutablePath);
+					utils.printDebug("Java Call: " + javaExecutablePath + "\n\t" + args);
+					outputChannel.append("Executing Wsdl2Rest...\n");
+					wsdl2restProcess = child_process.spawn(javaExecutablePath, args);
+
+					wsdl2restProcess.stdout.on('data', function (data) {
+						outputChannel.append(`${data} \n`);
+						utils.printDebug(data);
+					});
+					wsdl2restProcess.stderr.on('data', function (data) {
+						outputChannel.append(`${data} \n`);
+						utils.printDebug(data);
+					});
+					wsdl2restProcess.on("close", (code, signal) => {
+						if (code === 0) {
+							vscode.window.showInformationMessage('Created CXF artifacts for specified WSDL at ' + outputDirectory);
+							vscode.window.showInformationMessage('Created ' + rawContextPath);
+						} else {
+							vscode.window.showErrorMessage(`Wsdl2Rest did not generate artifacts successfully - please check the output channel for details`);
+						}
+						outputChannel.append("\nProcess finished. Return code " + code + ".\n\n");
+						resolve(code === 0);
+					});				
+				});
+			} catch (error) {
+				console.error(error);
+				reject(error);
+			}
+		});
 }
 
 function getTempWorkspace() {

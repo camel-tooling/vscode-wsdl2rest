@@ -5,7 +5,7 @@
     "version": "0.0.1",
     "publisher": "camel-tooling",
     "engines": {
-        "vscode": "^1.31.0"
+        "vscode": "^1.29.1"
     },
     "categories": [
         "Other"
@@ -34,9 +34,9 @@
     },
     "devDependencies": {
         "@types/chai": "^4.1.7",
-        "@types/mocha": "^5.2.5",
+        "@types/mocha": "^5.2.6",
         "@types/node": "^10.12.18",
-        "@types/sinon": "^7.0.4",
+        "@types/sinon": "^7.0.6",
         "@types/sinon-chai": "^3.2.1",
         "assert": "^1.4.1",
         "chai": "^4.2.0",
@@ -45,7 +45,7 @@
         "mocha": "^5.2.0",
         "mvn-artifact-download": "^4.0.0",
         "request": "^2.88.0",
-        "sinon": "^7.2.3",
+        "sinon": "^7.2.4",
         "sinon-chai": "^3.3.0",
         "tslint": "^5.12.1",
         "typescript": "^3.2.4",
