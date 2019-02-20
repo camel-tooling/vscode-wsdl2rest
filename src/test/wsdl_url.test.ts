@@ -17,23 +17,23 @@
 
 'use strict';
 
+import * as vscode from 'vscode';
+import * as assert from 'assert';
+import * as sinon from 'sinon';
+import * as path from 'path';
+import * as fs from 'fs';
+
 import * as app_soap from './app_soap';
 
 suite("Wsdl2rest Extension Tests from URL-provided wsdl file", function () {
 
+	let sandbox: sinon.SinonSandbox;
+	let showQuickPickStub: sinon.SinonStub;
+	let showInputBoxStub: sinon.SinonStub;
+
 	setup(async function () {
 		await app_soap.startWebService();
 		console.log('Started web service on ' + app_soap.getServiceURL());
-	});
-
-	teardown(async function () {
-		await app_soap.stopWebService();
-		console.log('Stopped web service on ' + app_soap.getServiceURL());
-	});
-
-	test('Should do something with wsdl2rest accessing a wsdl from a running web service', function () {
-		// wsdl2rest - with wsdl address, create artifacts.
-		// run web service
 
 		// properties to use
 		// wsdl url - 'http://localhost:3000/helloworldservice?wsdl'
@@ -42,12 +42,34 @@ suite("Wsdl2rest Extension Tests from URL-provided wsdl file", function () {
 		// dsl - 'spring' or 'blueprint'
 		// output directory - 'src/main/java'
 
-		//await vscode.commands.executeCommand('extension.wsdl2rest'); 
+		sandbox = sinon.createSandbox();
 
-		// shut down web service
+		showQuickPickStub = sandbox.stub(vscode.window, 'showQuickPick');
+		showQuickPickStub.onFirstCall().returns('Spring');
 
-		// currently, this option does not exist - we only accept a local file, not a URL
+		showInputBoxStub = sandbox.stub(vscode.window, 'showInputBox');
+		showInputBoxStub.onFirstCall().returns('http://localhost:3000/helloworldservice?wsdl');
+		showInputBoxStub.onSecondCall().returns('src/main/java');
+		showInputBoxStub.onThirdCall().returns('http://localhost:3000/helloworldservice');
+		showInputBoxStub.onCall(3).returns('http://localhost:8081/jaxrs');
+	});
 
-		this.skip();
+	teardown(async function () {
+		await app_soap.stopWebService();
+		console.log('Stopped web service on ' + app_soap.getServiceURL());
+
+		showQuickPickStub.restore();
+		showInputBoxStub.restore();
+
+		sandbox.reset();
+	});
+
+	test('Should do something with wsdl2rest accessing a wsdl from a running web service', async function () {
+		await vscode.commands.executeCommand('extension.wsdl2rest.url'); 
+
+		assert.ok(fs.existsSync(path.join(__dirname, './config/logging.properties')));
+		assert.ok(fs.existsSync(path.join(__dirname, './src/main/resources/META-INF/spring/camel-context.xml')));
+		assert.ok(fs.existsSync(path.join(__dirname, './src/main/java/org/helloworld/test/rpclit/HelloService.java')));
+
 	});
 });
