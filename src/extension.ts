@@ -23,9 +23,7 @@ import * as path from 'path';
 import * as requirements from './requirements';
 import * as utils from './utils';
 import * as vscode from 'vscode';
-import * as os from 'os';
 import * as fileUrl from 'file-url';
-import * as url from 'url';
 
 let outputChannel: vscode.OutputChannel;
 let wsdl2restProcess: child_process.ChildProcess;
@@ -72,6 +70,30 @@ function callWsdl2RestViaUIAsync(useUrl: boolean): Promise<string> {
 	});
 }
 
+function validateEndpointUrl (text: string): string {
+	if (!utils.isAValidUrl(text)) {
+		return "WSDL URL not valid.";
+	}
+	return null;
+}
+
+function validateWsdlUrl (text: string): string {
+	if (!utils.isAValidUrl(text)) {
+		return "WSDL URL not valid.";
+	}
+	if (!utils.isFileAvailable(text)) {
+		return "WSDL file not available at URL specified.";
+	}
+	return null;
+}
+
+function validatePath (text: string): string {
+	if (!utils.isValidPath(text)) {
+		return "Invalid output folder specified.";
+	}
+	return null;
+}
+
 function askForUserInputs(useUrl: boolean): Promise<any> {
 	return new Promise( async (resolve, reject) => {
 		try {
@@ -81,18 +103,14 @@ function askForUserInputs(useUrl: boolean): Promise<any> {
 			} else {
 				fileUri = await vscode.window.showInputBox({
 					prompt: 'WSDL URL',
-					placeHolder: 'Provide the URL for the WSDL file'
+					placeHolder: 'Provide the URL for the WSDL file',
+					validateInput: (text: string) => validateWsdlUrl(text)
 				});
 			}
 			if (fileUri && Array.isArray(fileUri)) {
 				wsdlFileUri = fileUri[0] + "";
 			} else if (fileUri) {
-				var result = url.parse(fileUri);
-				if (!result) {
-					reject("WSDL URL not valid.");
-				} else {
-					wsdlFileUri = fileUri;
-				}
+				wsdlFileUri = fileUri;
 			} else {
 				reject("WSDL not valid.");
 			}
@@ -115,7 +133,8 @@ function askForUserInputs(useUrl: boolean): Promise<any> {
 			outputDirectory = await vscode.window.showInputBox({
 				prompt: 'Output Directory',
 				placeHolder: 'Enter the output directory for generated artifacts',
-				value: 'src/main/java'
+				value: 'src/main/java',
+				validateInput: (text: string) => validatePath(text)
 			});
 			if (!outputDirectory) {
 				reject("No valid output folder specified.");
@@ -125,7 +144,8 @@ function askForUserInputs(useUrl: boolean): Promise<any> {
 			jaxws = await vscode.window.showInputBox({
 				prompt: 'JAXWS Endpoint',
 				placeHolder: 'Enter the address for the running jaxws endpoint',
-				value: 'http://localhost:8080/somepath'
+				value: 'http://localhost:8080/somepath',
+				validateInput: (text: string) => validateEndpointUrl(text)
 			});
 			if (!jaxws) {
 				reject("No valid JAXWS Endpoint soecified.");
@@ -135,7 +155,8 @@ function askForUserInputs(useUrl: boolean): Promise<any> {
 			jaxrs = await vscode.window.showInputBox({
 				prompt: 'JAXRS Endpoint',
 				placeHolder: 'Enter the address for the jaxrs endpoint',
-				value: 'http://localhost:8081/jaxrs'
+				value: 'http://localhost:8081/jaxrs',
+				validateInput: (text: string) => validateEndpointUrl(text)
 			});
 			if (!jaxrs) {
 				reject("No valid JAXRS endpoint specified.");
@@ -154,7 +175,7 @@ function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 		try {
 			let storagePath: string = vscode.workspace.rootPath; // is undefined for some unknown reason
 			if (!storagePath) {
-				storagePath = getTempWorkspace();
+				storagePath = utils.getTempWorkspace();
 			}
 
 			if (outputDirectory.endsWith('/java')) {
@@ -253,18 +274,4 @@ function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 				reject(error);
 			}
 		});
-}
-
-function getTempWorkspace() {
-	return path.resolve(os.tmpdir(),'vscodesws_'+makeRandomHexString(5));
-}
-
-function makeRandomHexString(length) {
-	var chars = ['0', '1', '2', '3', '4', '5', '6', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'];
-	var result = '';
-	for (var i = 0; i < length; i++) {
-		var idx = Math.floor(chars.length * Math.random());
-		result += chars[idx];
-	}
-	return result;
 }

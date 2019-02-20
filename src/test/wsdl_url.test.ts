@@ -25,6 +25,8 @@ import * as fs from 'fs';
 
 import * as app_soap from './app_soap';
 
+// possible wsdl to test - http://www.thomas-bayer.com/axis2/services/BLZService?wsdl
+
 suite("Wsdl2rest Extension Tests from URL-provided wsdl file", function () {
 
 	let sandbox: sinon.SinonSandbox;
