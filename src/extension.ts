@@ -21,28 +21,38 @@ let dsl: string;
 let jaxrs: string;
 let jaxws: string;
 
+function doSomethingAsync(): Promise<string> {
+	return new Promise <string> ( (resolve, reject) => {
+		askForUserInputs()
+		.then( () => {
+			callWsdl2Rest(wsdl2restExecutablePath)
+				.then( success => {
+					if (!success) {
+						vscode.window.showErrorMessage("Unable to create the Wsdl2Rest files.");
+						reject();
+					}
+					resolve();
+					return success;
+				})
+				.catch(err => {
+					console.error("Wsdl2Rest execution return code: " + err);
+					reject();
+					return err;
+				});
+		})
+		.catch(err => {
+			console.error("Error retrieving the required user inputs. " + err);
+			reject();
+			return err;
+		});
+	});
+}
+
 export function activate(context: vscode.ExtensionContext) {
 	
 	wsdl2restExecutablePath = context.asAbsolutePath(path.join('./', 'jars/','wsdl2rest.jar'));
 	outputChannel = vscode.window.createOutputChannel("WSDL2Rest");
-
-	context.subscriptions.push(vscode.commands.registerCommand('extension.wsdl2rest', () => {
-		askForUserInputs()
-			.then( () => {
-				callWsdl2Rest(wsdl2restExecutablePath)
-					.then( success => {
-						if (!success) {
-							vscode.window.showErrorMessage("Unable to create the Wsdl2Rest files.");
-						}
-					})
-					.catch(err => {
-						console.error("Wsdl2Rest execution return code: " + err);
-					});
-			})
-			.catch(err => {
-				console.error("Error retrieving the required user inputs. " + err);
-			});
-	}));
+	context.subscriptions.push(vscode.commands.registerCommand('extension.wsdl2rest', () => doSomethingAsync()));
 }
 
 function askForUserInputs(): Promise<any> {
