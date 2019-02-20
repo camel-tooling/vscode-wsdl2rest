@@ -26,6 +26,7 @@ import * as vscode from 'vscode';
 import * as os from 'os';
 import * as fileUrl from 'file-url';
 import * as url from 'url';
+import * as http from 'http';
 
 let outputChannel: vscode.OutputChannel;
 let wsdl2restProcess: child_process.ChildProcess;
@@ -72,6 +73,32 @@ function callWsdl2RestViaUIAsync(useUrl: boolean): Promise<string> {
 	});
 }
 
+function isAValidUrl(value: string): boolean {
+	// can't be empty
+	if (!value || value.trim().length === 0) {
+		return false;
+	}
+	try {
+		const result = url.parse(value);
+		if (result.host) return true;
+	} catch (TypeError) {
+	}
+	return false;
+}
+
+async function isFileAvailable(url: string): Promise<boolean> {
+	return new Promise <boolean> ( (resolve, reject) => {
+			http.get(url, (res) => {
+			const { statusCode } = res;
+			if (statusCode === 200) {
+				console.log("test url is available (" + url + "): " + statusCode);
+				resolve(true);
+			}
+		});
+		reject(false);
+	});
+}
+
 function askForUserInputs(useUrl: boolean): Promise<any> {
 	return new Promise( async (resolve, reject) => {
 		try {
@@ -81,7 +108,16 @@ function askForUserInputs(useUrl: boolean): Promise<any> {
 			} else {
 				fileUri = await vscode.window.showInputBox({
 					prompt: 'WSDL URL',
-					placeHolder: 'Provide the URL for the WSDL file'
+					placeHolder: 'Provide the URL for the WSDL file',
+					validateInput: (text: string) => {
+						if (!isAValidUrl(text)) {
+							return "WSDL URL not valid.";
+						}
+						if (!isFileAvailable(text)) {
+							return "WSDL file not available at URL specified.";
+						}
+						return null;
+					}
 				});
 			}
 			if (fileUri && Array.isArray(fileUri)) {
