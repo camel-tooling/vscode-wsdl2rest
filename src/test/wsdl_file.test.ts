@@ -58,7 +58,7 @@ suite("Wsdl2rest Extension Tests from wsdl file - spring", async function () {
 
 	test("should be able to run command: extension.wsdl2rest - with local wsdl file - spring", async function() {
 
-		await vscode.commands.executeCommand('extension.wsdl2rest'); 
+		await vscode.commands.executeCommand('extension.wsdl2rest.local'); 
 
 		assert.ok(fs.existsSync(path.join(__dirname, './config/logging.properties')));
 		assert.ok(fs.existsSync(path.join(__dirname, './src/main/resources/META-INF/spring/camel-context.xml')));
@@ -67,7 +67,7 @@ suite("Wsdl2rest Extension Tests from wsdl file - spring", async function () {
 
 	test("should be able to run command: extension.wsdl2rest - with local wsdl file - blueprint", async function() {
 
-		await vscode.commands.executeCommand('extension.wsdl2rest'); 
+		await vscode.commands.executeCommand('extension.wsdl2rest.local'); 
 
 		assert.ok(fs.existsSync(path.join(__dirname, './config/logging.properties')));
 		assert.ok(fs.existsSync(path.join(__dirname, './src/main/resources/OSGI-INF/blueprint/blueprint.xml')));

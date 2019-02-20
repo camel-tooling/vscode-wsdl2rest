@@ -25,6 +25,7 @@ import * as utils from './utils';
 import * as vscode from 'vscode';
 import * as os from 'os';
 import * as fileUrl from 'file-url';
+import * as url from 'url';
 
 let outputChannel: vscode.OutputChannel;
 let wsdl2restProcess: child_process.ChildProcess;
@@ -40,12 +41,13 @@ export function activate(context: vscode.ExtensionContext) {
 	
 	wsdl2restExecutablePath = context.asAbsolutePath(path.join('./', 'jars/','wsdl2rest.jar'));
 	outputChannel = vscode.window.createOutputChannel("WSDL2Rest");
-	context.subscriptions.push(vscode.commands.registerCommand('extension.wsdl2rest', () => callWsdl2RestViaUIAsync()));
+	context.subscriptions.push(vscode.commands.registerCommand('extension.wsdl2rest.local', () => callWsdl2RestViaUIAsync(false)));
+	context.subscriptions.push(vscode.commands.registerCommand('extension.wsdl2rest.url', () => callWsdl2RestViaUIAsync(true)));
 }
 
-function callWsdl2RestViaUIAsync(): Promise<string> {
+function callWsdl2RestViaUIAsync(useUrl: boolean): Promise<string> {
 	return new Promise <string> ( (resolve, reject) => {
-		askForUserInputs()
+		askForUserInputs(useUrl)
 		.then( () => {
 			callWsdl2Rest(wsdl2restExecutablePath)
 				.then( success => {
@@ -70,12 +72,27 @@ function callWsdl2RestViaUIAsync(): Promise<string> {
 	});
 }
 
-function askForUserInputs(): Promise<any> {
+function askForUserInputs(useUrl: boolean): Promise<any> {
 	return new Promise( async (resolve, reject) => {
 		try {
-			let fileUri = await vscode.window.showOpenDialog(utils.Options);
+			let fileUri;
+			if (!useUrl) {
+				fileUri = await vscode.window.showOpenDialog(utils.Options);
+			} else {
+				fileUri = await vscode.window.showInputBox({
+					prompt: 'WSDL URL',
+					placeHolder: 'Provide the URL for the WSDL file'
+				});
+			}
 			if (fileUri && Array.isArray(fileUri)) {
 				wsdlFileUri = fileUri[0] + "";
+			} else if (fileUri) {
+				var result = url.parse(fileUri);
+				if (!result) {
+					reject("WSDL URL not valid.");
+				} else {
+					wsdlFileUri = fileUri;
+				}
 			} else {
 				reject("WSDL not valid.");
 			}
@@ -146,8 +163,10 @@ function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 
 			let outPath: string = path.join(storagePath, outputDirectory);
 			
-			if (!wsdlFileUri.startsWith('file:')) {
-				wsdlFileUri = fileUrl(wsdlFileUri);
+			if (!(wsdlFileUri.startsWith('http:') || !wsdlFileUri.startsWith('https:'))) {
+				if (!wsdlFileUri.startsWith('file:')) {
+					wsdlFileUri = fileUrl(wsdlFileUri);
+				}
 			}
 			
 			if (!fs.existsSync(outPath)) {

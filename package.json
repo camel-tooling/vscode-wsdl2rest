@@ -11,14 +11,19 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.wsdl2rest"
+        "onCommand:extension.wsdl2rest.local",
+        "onCommand:extension.wsdl2rest.url"
     ],
     "main": "./out/extension",
     "contributes": {
         "commands": [
             {
-                "command": "extension.wsdl2rest",
-                "title": "wsdl2rest: Create Camel Rest DSL configuration from WSDL file"
+                "command": "extension.wsdl2rest.local",
+                "title": "wsdl2rest: Create Camel Rest DSL configuration from local WSDL file"
+            },
+            {
+                "command": "extension.wsdl2rest.url",
+                "title": "wsdl2rest: Create Camel Rest DSL configuration from WSDL file URL"
             }
         ]
     },

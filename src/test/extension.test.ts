@@ -40,7 +40,8 @@ suite("ensure Wsdl2rest extension exists and is accessible", async function() {
 	test('should register all wsdl2rest commands', function () {
 		return vscode.commands.getCommands(true).then((commands) => {
 			const COMMANDS = [
-				'extension.wsdl2rest'
+				'extension.wsdl2rest.local',
+				'extension.wsdl2rest.url'
 			];
 			const foundWsdl2RestCommands = commands.filter((value) => {
 				return COMMANDS.indexOf(value) >= 0 || value.startsWith('extension.wsdl2rest');
