@@ -30,7 +30,7 @@
         "watch": "tsc -watch -p ./",
         "preinstall": "node ./scripts/preinstall.js",
         "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+        "test": "npm run vscode:prepublish && node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
         "@types/chai": "^4.1.7",
