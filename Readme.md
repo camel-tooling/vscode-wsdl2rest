@@ -1,4 +1,5 @@
 [![GitHub tag](https://img.shields.io/github/tag/bfitzpat/vscode-wsdl2rest.svg?style=plastic)]()
+[![Build Status](https://travis-ci.org/camel-tooling/vscode-wsdl2rest.svg?branch=master)](https://travis-ci.org/camel-tooling/vscode-wsdl2rest)
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)]()
 [![Gitter](https://img.shields.io/gitter/room/camel-tooling/Lobby.js.svg)](https://gitter.im/camel-tooling/Lobby)
 
