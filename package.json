@@ -4,6 +4,35 @@
     "description": "A VS Code extension supporting wsdl2rest",
     "version": "0.0.1",
     "publisher": "camel-tooling",
+    "preview": true,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/camel-tooling/vscode-wsdl2rest"
+    },
+    "bugs": {
+        "url": "https://github.com/camel-tooling/vscode-wsdl2rest/issues"
+    },
+    "author": [
+        {
+            "name": "Brian Fitzpatrick",
+            "email": "bfitzpat@redhat.com",
+            "url": "http://redhat.com"
+        }
+    ],
+    "maintainers": [
+        {
+            "name": "Brian Fitzpatrick",
+            "email": "bfitzpat@redhat.com",
+            "url": "http://redhat.com"
+        }
+    ],
+    "homepage": "https://github.com/camel-tooling/vscode-wsdl2rest",
+    "keywords": [
+        "Camel",
+        "wsdl2rest",
+        "SOAP",
+        "Tool"
+    ],
     "engines": {
         "vscode": "^1.29.1"
     },
