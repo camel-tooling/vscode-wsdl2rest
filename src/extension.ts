@@ -213,7 +213,13 @@ function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 			}
 			restContextPath = path.join(storagePath, rawContextPath);
 
-			let newReadmePath = path.join(storagePath, 'wsdl2rest.readme.md');
+			let readmeRoot = outputDirectory.substring(0, outputDirectory.indexOf('/'));
+			let newReadmePath: any;
+			if (/src/.test(readmeRoot)) {
+				newReadmePath = path.join(storagePath, 'wsdl2rest.readme.md');
+			} else {
+				newReadmePath = path.join(storagePath, readmeRoot, 'wsdl2rest.readme.md');
+			}
 
 			if (outputChannel) {
 				outputChannel.clear();
