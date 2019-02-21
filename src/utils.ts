@@ -22,6 +22,7 @@ import * as url from 'url';
 import * as http from 'http';
 import * as path from 'path';
 import * as os from 'os';
+import * as fs from 'fs';
 
 const DEBUG_MODE: boolean = true;
 
@@ -93,4 +94,18 @@ export function makeRandomHexString(length) {
 		result += chars[idx];
 	}
 	return result;
+}
+
+export function deleteNoFailRecursive(path:any) {
+	if (fs.existsSync(path)) {
+		fs.readdirSync(path).forEach(function(file, index){
+			var curPath = path + "/" + file;
+			if (fs.lstatSync(curPath).isDirectory()) { // recurse
+				deleteNoFailRecursive(curPath);
+			} else { // delete file
+				fs.unlinkSync(curPath);
+			}
+		});
+		fs.rmdirSync(path);
+	}
 }
