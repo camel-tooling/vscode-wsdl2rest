@@ -22,7 +22,7 @@ import * as assert from 'assert';
 import * as sinon from 'sinon';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as utils from '../utils';
+import * as test_utils from './test_utils';
 
 suite("Wsdl2rest Extension Tests from wsdl file - spring", async function () {
 
@@ -61,7 +61,7 @@ suite("Wsdl2rest Extension Tests from wsdl file - spring", async function () {
 
 	test("should be able to run command: extension.wsdl2rest - with local wsdl file - spring", async function() {
 
-		utils.deleteNoFailRecursive(projectdir);
+		await test_utils.cleanup(projectdir);
 		showQuickPickStub.onFirstCall().returns('Spring');
 
 		await vscode.commands.executeCommand('extension.wsdl2rest.local'); 
@@ -73,7 +73,7 @@ suite("Wsdl2rest Extension Tests from wsdl file - spring", async function () {
 
 	test("should be able to run command: extension.wsdl2rest - with local wsdl file - blueprint", async function() {
 
-		utils.deleteNoFailRecursive(projectdir);
+		await test_utils.cleanup(projectdir);
 		showQuickPickStub.onFirstCall().returns('Blueprint');
 
 		await vscode.commands.executeCommand('extension.wsdl2rest.local'); 
