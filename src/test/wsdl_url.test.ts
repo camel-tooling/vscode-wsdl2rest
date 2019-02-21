@@ -22,7 +22,7 @@ import * as assert from 'assert';
 import * as sinon from 'sinon';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as utils from '../utils';
+import * as test_utils from './test_utils';
 import * as app_soap from './app_soap';
 
 // possible wsdl to test - http://www.thomas-bayer.com/axis2/services/BLZService?wsdl
@@ -70,7 +70,8 @@ suite("Wsdl2rest Extension Tests from URL-provided wsdl file", function () {
 	});
 
 	test('Should do something with wsdl2rest accessing a wsdl from a running web service', async function () {
-		utils.deleteNoFailRecursive(projectdir);
+		
+		await test_utils.cleanup(projectdir);
 		showQuickPickStub.onFirstCall().returns('Spring');
 
 		await vscode.commands.executeCommand('extension.wsdl2rest.url'); 
