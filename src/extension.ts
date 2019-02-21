@@ -34,10 +34,12 @@ let outputDirectory: string;
 let dsl: string;
 let jaxrs: string;
 let jaxws: string;
+let readmePath: string;
 
 export function activate(context: vscode.ExtensionContext) {
 	
 	wsdl2restExecutablePath = context.asAbsolutePath(path.join('./', 'jars/','wsdl2rest.jar'));
+	readmePath = context.asAbsolutePath(path.join('./', 'src/','wsdl2rest.readme.md'));
 	outputChannel = vscode.window.createOutputChannel("WSDL2Rest");
 	context.subscriptions.push(vscode.commands.registerCommand('extension.wsdl2rest.local', () => callWsdl2RestViaUIAsync(false)));
 	context.subscriptions.push(vscode.commands.registerCommand('extension.wsdl2rest.url', () => callWsdl2RestViaUIAsync(true)));
@@ -211,6 +213,8 @@ function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 			}
 			restContextPath = path.join(storagePath, rawContextPath);
 
+			let newReadmePath = path.join(storagePath, 'wsdl2rest.readme.md');
+
 			if (outputChannel) {
 				outputChannel.clear();
 				outputChannel.show();
@@ -227,6 +231,9 @@ function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 					let log4jConfigPath: string = fileUrl(newLog4JProps);
 					utils.printDebug("Log4J Config: " + log4jConfigPath);
 					javaExecutablePath = path.resolve(requirements.java_home + '/bin/java');
+
+					fs.copySync(path.resolve(readmePath), newReadmePath);
+					utils.printDebug("New readme: " + newReadmePath);
 
 					let contextType = "--camel-context";
 					if (isBlueprint) {
