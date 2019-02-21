@@ -47,3 +47,71 @@ After that, the two paths converge and you must specify:
 
 At the end of the journey, the extension calls the wsdl2rest utility (https://github.com/jboss-fuse/wsdl2rest) to generate a Camel Rest configuration in your chosen DSL, plus the CXF artifacts to harness the power of your SOAP-based JAX-WS service in a RESTful way. 
 
+## Caveats for using this extension
+
+The wsdl2rest extension only creates the Camel Rest DSL configuration (Spring- or Blueprint-based, not Java at this time) and any
+associated CXF files to enable access to the SOAP service in a RESTful way. It does not create the project or update it to enable
+you to use the generated artifacts right away.
+
+We recommend creating a mavenized Camel- or Fuse-based project ahead of time and then using this extension to generate
+the projects within it. This project can created in many ways, such as (but not limited to):
+
+* A standalone Camel- or Fuse-based Spring project based on an existing example or quickstart (such as https://github.com/apache/camel/tree/master/examples/camel-example-spring or https://github.com/jboss-fuse/quickstarts/tree/master/beginner/camel-cbr)
+* A Maven project created using mvn:archetype (http://camel.apache.org/camel-maven-archetypes.html) with camel-archetype-spring, camel-archetype-blueprint, or camel-archetype-spring-boot.
+* A project created with the Project Initializer by Red Hat VS Code extension (https://marketplace.visualstudio.com/items?itemName=redhat.project-initializer)
+
+With the project in place, you can use the wsdl2rest Extension to generate the necessary artifacts there, then you may have to 
+update the Maven configuration with a few additional dependencies as follows.
+
+### Spring- and Spring Boot-based projects
+
+```xml
+    <!-- wsdl2rest dependencies -->
+    <dependency>
+        <groupId>org.jboss.spec.javax.ws.rs</groupId>
+        <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
+        <version>1.0.0.Final-redhat-1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jackson</artifactId>
+        <version>${camel.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-cxf</artifactId>
+        <version>${camel.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jetty</artifactId>
+        <version>${camel.version}</version>
+    </dependency>
+```
+
+### Blueprint-based projects
+
+```xml
+    <!-- wsdl2rest dependencies -->
+    <dependency>
+        <groupId>org.jboss.spec.javax.ws.rs</groupId>
+        <artifactId>jboss-jaxrs-api_2.0_spec</artifactId>
+        <version>1.0.0.Final-redhat-1</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jackson</artifactId>
+        <version>${camel.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-cxf</artifactId>
+        <version>${camel.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-servlet</artifactId>
+        <version>${camel.version}</version>
+    </dependency>
+```
+
