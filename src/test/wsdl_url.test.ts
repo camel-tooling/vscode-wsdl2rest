@@ -22,7 +22,7 @@ import * as assert from 'assert';
 import * as sinon from 'sinon';
 import * as path from 'path';
 import * as fs from 'fs';
-
+import * as utils from '../utils';
 import * as app_soap from './app_soap';
 
 // possible wsdl to test - http://www.thomas-bayer.com/axis2/services/BLZService?wsdl
@@ -32,6 +32,10 @@ suite("Wsdl2rest Extension Tests from URL-provided wsdl file", function () {
 	let sandbox: sinon.SinonSandbox;
 	let showQuickPickStub: sinon.SinonStub;
 	let showInputBoxStub: sinon.SinonStub;
+
+	let projectroot = 'myproject';
+	let srcPath = projectroot + '/src/main/java';
+	let projectdir =  path.join(__dirname, projectroot);
 
 	setup(async function () {
 		await app_soap.startWebService();
@@ -47,11 +51,10 @@ suite("Wsdl2rest Extension Tests from URL-provided wsdl file", function () {
 		sandbox = sinon.createSandbox();
 
 		showQuickPickStub = sandbox.stub(vscode.window, 'showQuickPick');
-		showQuickPickStub.onFirstCall().returns('Spring');
 
 		showInputBoxStub = sandbox.stub(vscode.window, 'showInputBox');
 		showInputBoxStub.onFirstCall().returns('http://localhost:3000/helloworldservice?wsdl');
-		showInputBoxStub.onSecondCall().returns('src/main/java');
+		showInputBoxStub.onSecondCall().returns(srcPath);
 		showInputBoxStub.onThirdCall().returns('http://localhost:3000/helloworldservice');
 		showInputBoxStub.onCall(3).returns('http://localhost:8081/jaxrs');
 	});
@@ -67,11 +70,14 @@ suite("Wsdl2rest Extension Tests from URL-provided wsdl file", function () {
 	});
 
 	test('Should do something with wsdl2rest accessing a wsdl from a running web service', async function () {
+		utils.deleteNoFailRecursive(projectdir);
+		showQuickPickStub.onFirstCall().returns('Spring');
+
 		await vscode.commands.executeCommand('extension.wsdl2rest.url'); 
 
 		assert.ok(fs.existsSync(path.join(__dirname, './config/logging.properties')));
-		assert.ok(fs.existsSync(path.join(__dirname, './src/main/resources/META-INF/spring/camel-context.xml')));
-		assert.ok(fs.existsSync(path.join(__dirname, './src/main/java/org/helloworld/test/rpclit/HelloService.java')));
+		assert.ok(fs.existsSync(path.join(projectdir, '/src/main/resources/META-INF/spring/camel-context.xml')));
+		assert.ok(fs.existsSync(path.join(projectdir, '/src/main/java/org/helloworld/test/rpclit/HelloService.java')));
 
 	});
 });

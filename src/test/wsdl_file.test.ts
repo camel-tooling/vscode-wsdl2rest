@@ -22,6 +22,7 @@ import * as assert from 'assert';
 import * as sinon from 'sinon';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as utils from '../utils';
 
 suite("Wsdl2rest Extension Tests from wsdl file - spring", async function () {
 
@@ -29,6 +30,10 @@ suite("Wsdl2rest Extension Tests from wsdl file - spring", async function () {
 	let showOpenDialogStub: sinon.SinonStub;
 	let showQuickPickStub: sinon.SinonStub;
 	let showInputBoxStub: sinon.SinonStub;
+
+	let projectroot = 'myproject';
+	let srcPath = projectroot + '/src/main/java';
+	let projectdir =  path.join(__dirname, projectroot);
 
 	setup(() => {
 		sandbox = sinon.createSandbox();
@@ -39,11 +44,9 @@ suite("Wsdl2rest Extension Tests from wsdl file - spring", async function () {
 		showOpenDialogStub.onFirstCall().resolves([vscode.Uri.file(addressWsdlPath)]);
 
 		showQuickPickStub = sandbox.stub(vscode.window, 'showQuickPick');
-		showQuickPickStub.onFirstCall().returns('Spring');
-		showQuickPickStub.onFirstCall().returns('Blueprint');
 
 		showInputBoxStub = sandbox.stub(vscode.window, 'showInputBox');
-		showInputBoxStub.onFirstCall().returns('src/main/java');
+		showInputBoxStub.onFirstCall().returns(srcPath);
 		showInputBoxStub.onSecondCall().returns('http://localhost:8080/somepath');
 		showInputBoxStub.onThirdCall().returns('http://localhost:8081/jaxrs');
 	});	
@@ -58,19 +61,25 @@ suite("Wsdl2rest Extension Tests from wsdl file - spring", async function () {
 
 	test("should be able to run command: extension.wsdl2rest - with local wsdl file - spring", async function() {
 
+		utils.deleteNoFailRecursive(projectdir);
+		showQuickPickStub.onFirstCall().returns('Spring');
+
 		await vscode.commands.executeCommand('extension.wsdl2rest.local'); 
 
 		assert.ok(fs.existsSync(path.join(__dirname, './config/logging.properties')));
-		assert.ok(fs.existsSync(path.join(__dirname, './src/main/resources/META-INF/spring/camel-context.xml')));
-		assert.ok(fs.existsSync(path.join(__dirname, './src/main/java/org/jboss/fuse/wsdl2rest/test/doclit/AddAddress.java')));
+		assert.ok(fs.existsSync(path.join(projectdir, '/src/main/resources/META-INF/spring/camel-context.xml')));
+		assert.ok(fs.existsSync(path.join(projectdir, '/src/main/java/org/jboss/fuse/wsdl2rest/test/doclit/AddAddress.java')));
 	});	
 
 	test("should be able to run command: extension.wsdl2rest - with local wsdl file - blueprint", async function() {
 
+		utils.deleteNoFailRecursive(projectdir);
+		showQuickPickStub.onFirstCall().returns('Blueprint');
+
 		await vscode.commands.executeCommand('extension.wsdl2rest.local'); 
 
 		assert.ok(fs.existsSync(path.join(__dirname, './config/logging.properties')));
-		assert.ok(fs.existsSync(path.join(__dirname, './src/main/resources/OSGI-INF/blueprint/blueprint.xml')));
-		assert.ok(fs.existsSync(path.join(__dirname, './src/main/java/org/jboss/fuse/wsdl2rest/test/doclit/AddAddress.java')));
+		assert.ok(fs.existsSync(path.join(projectdir, '/src/main/resources/OSGI-INF/blueprint/blueprint.xml')));
+		assert.ok(fs.existsSync(path.join(projectdir, '/src/main/java/org/jboss/fuse/wsdl2rest/test/doclit/AddAddress.java')));
 	});	
 });

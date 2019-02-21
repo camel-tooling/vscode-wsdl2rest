@@ -203,11 +203,11 @@ function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 			const isSpring: boolean = dsl === utils.DslType.Spring;
 
 			if (isBlueprint) {
-				rawContextPath = 'src/main/resources/OSGI-INF/blueprint/blueprint.xml';
+				rawContextPath = outputDirectory + '/resources/OSGI-INF/blueprint/blueprint.xml';
 			} else if (isSpringBoot) {
-				rawContextPath = 'src/main/resources/camel-context.xml';
+				rawContextPath = outputDirectory + '/resources/camel-context.xml';
 			} else if (isSpring) {
-				rawContextPath = 'src/main/resources/META-INF/spring/camel-context.xml';
+				rawContextPath = outputDirectory + '/resources/META-INF/spring/camel-context.xml';
 			}
 			restContextPath = path.join(storagePath, rawContextPath);
 
@@ -228,7 +228,10 @@ function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 					utils.printDebug("Log4J Config: " + log4jConfigPath);
 					javaExecutablePath = path.resolve(requirements.java_home + '/bin/java');
 
-					let contextType = isBlueprint ? "--blueprint-context" : "--camel-context";
+					let contextType = "--camel-context";
+					if (isBlueprint) {
+						contextType = "--blueprint-context";
+					}
 					let args:string[];
 					args = [ "-Dlog4j.configuration=" + log4jConfigPath, 
 						"-jar", wsdl2restExecutablePath,
