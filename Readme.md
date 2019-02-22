@@ -54,7 +54,7 @@ associated CXF files to enable access to the SOAP service in a RESTful way. It d
 you to use the generated artifacts right away.
 
 We recommend creating a mavenized Camel- or Fuse-based project ahead of time and then using this extension to generate
-the projects within it. This project can created in many ways, such as (but not limited to):
+the projects within it. This project can be created in many ways, such as (but not limited to):
 
 * A standalone Camel- or Fuse-based Spring project based on an existing example or quickstart (such as https://github.com/apache/camel/tree/master/examples/camel-example-spring or https://github.com/jboss-fuse/quickstarts/tree/master/beginner/camel-cbr)
 * A Maven project created using mvn:archetype (http://camel.apache.org/camel-maven-archetypes.html) with camel-archetype-spring, camel-archetype-blueprint, or camel-archetype-spring-boot.
