@@ -29,6 +29,7 @@ let outputChannel: vscode.OutputChannel;
 let wsdl2restProcess: child_process.ChildProcess;
 let javaExecutablePath: string;
 let wsdl2restExecutablePath: string;
+let resourcesPath: string;
 let wsdlFileUri: string;
 let outputDirectory: string;
 let dsl: string;
@@ -39,7 +40,7 @@ let readmePath: string;
 export function activate(context: vscode.ExtensionContext) {
 	
 	wsdl2restExecutablePath = context.asAbsolutePath(path.join('./', 'jars/','wsdl2rest.jar'));
-	readmePath = context.asAbsolutePath(path.join('./', 'src/','wsdl2rest.readme.md'));
+	resourcesPath = context.asAbsolutePath(path.join('./', 'resources/'));
 	outputChannel = vscode.window.createOutputChannel("WSDL2Rest");
 	context.subscriptions.push(vscode.commands.registerCommand('extension.wsdl2rest.local', () => callWsdl2RestViaUIAsync(false)));
 	context.subscriptions.push(vscode.commands.registerCommand('extension.wsdl2rest.url', () => callWsdl2RestViaUIAsync(true)));
@@ -228,7 +229,7 @@ function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 
 			requirements.resolveRequirements()
 				.then(requirements => {
-					let originalLog4JProps = wsdl2restExecutablePath.substring(0, wsdl2restExecutablePath.lastIndexOf(path.sep)+1) + "log4j.properties";
+					let originalLog4JProps = resourcesPath.substring(0, resourcesPath.lastIndexOf(path.sep)+1) + "log4j.properties";
 					let newLogsFolder = storagePath + path.sep + 'config';
 					let newLog4JProps = newLogsFolder + path.sep + 'logging.properties';
 					fs.copySync(path.resolve(originalLog4JProps), newLog4JProps);
@@ -238,6 +239,7 @@ function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 					utils.printDebug("Log4J Config: " + log4jConfigPath);
 					javaExecutablePath = path.resolve(requirements.java_home + '/bin/java');
 
+					let readmePath = resourcesPath.substring(0, resourcesPath.lastIndexOf(path.sep)+1) + 'wsdl2rest.readme.md';
 					fs.copySync(path.resolve(readmePath), newReadmePath);
 					utils.printDebug("New readme: " + newReadmePath);
 
