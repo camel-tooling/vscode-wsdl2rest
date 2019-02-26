@@ -47,8 +47,8 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 function callWsdl2RestViaUIAsync(useUrl: boolean): Promise<string> {
-	return new Promise <string> ( (resolve, reject) => {
-		askForUserInputs(useUrl)
+	return new Promise <string> ( async (resolve, reject) => {
+		await askForUserInputs(useUrl)
 		.then( () => {
 			callWsdl2Rest(wsdl2restExecutablePath)
 				.then( success => {
@@ -107,15 +107,19 @@ function askForUserInputs(useUrl: boolean): Promise<any> {
 				fileUri = await vscode.window.showInputBox({
 					prompt: 'WSDL URL',
 					placeHolder: 'Provide the URL for the WSDL file',
+					ignoreFocusOut: true,
 					validateInput: (text: string) => validateWsdlUrl(text)
 				});
+			}
+			if (fileUri === undefined) {
+				return reject("No WSDL specified.");
 			}
 			if (fileUri && Array.isArray(fileUri)) {
 				wsdlFileUri = fileUri[0] + "";
 			} else if (fileUri) {
 				wsdlFileUri = fileUri;
 			} else {
-				reject("WSDL not valid.");
+				return reject("WSDL not valid.");
 			}
 			utils.printDebug("WSDL File URI: " + wsdlFileUri);
 
@@ -128,47 +132,50 @@ function askForUserInputs(useUrl: boolean): Promise<any> {
 					placeHolder: 'Specify which DSL to generate the Camel configuration for'
 				}
 			);
-			if (!dsl) {
-				reject("No valid DSL Type selected.");
+			if (!dsl || dsl === undefined) {
+				return reject("No valid DSL Type selected.");
 			}
 			utils.printDebug("DSL Type: " + dsl);
 
 			outputDirectory = await vscode.window.showInputBox({
 				prompt: 'Output Directory',
 				placeHolder: 'Enter the output directory for generated artifacts',
+				ignoreFocusOut: true,
 				value: 'src/main/java',
 				validateInput: (text: string) => validatePath(text)
 			});
-			if (!outputDirectory) {
-				reject("No valid output folder specified.");
+			if (!outputDirectory || outputDirectory === undefined) {
+				return reject("No valid output folder specified.");
 			}
 			utils.printDebug("Ouput Folder: " + outputDirectory);
 
 			jaxws = await vscode.window.showInputBox({
 				prompt: 'JAXWS Endpoint',
 				placeHolder: 'Enter the address for the running jaxws endpoint',
+				ignoreFocusOut: true,
 				value: 'http://localhost:8080/somepath',
 				validateInput: (text: string) => validateEndpointUrl(text)
 			});
-			if (!jaxws) {
-				reject("No valid JAXWS Endpoint soecified.");
+			if (!jaxws || jaxws === undefined) {
+				return reject("No valid JAXWS Endpoint specified.");
 			}
 			utils.printDebug("JAXWS Endpoint: " + jaxws);
 
 			jaxrs = await vscode.window.showInputBox({
 				prompt: 'JAXRS Endpoint',
 				placeHolder: 'Enter the address for the jaxrs endpoint',
+				ignoreFocusOut: true,
 				value: 'http://localhost:8081/jaxrs',
 				validateInput: (text: string) => validateEndpointUrl(text)
 			});
-			if (!jaxrs) {
-				reject("No valid JAXRS endpoint specified.");
+			if (!jaxrs || jaxrs === undefined) {
+				return reject("No valid JAXRS endpoint specified.");
 			}
 			utils.printDebug("JAXRS Endpoint: " + jaxrs);
-			resolve();
+			return resolve();
 		} catch (error) {
 			console.error(error);
-			reject(error);
+			return reject(error);
 		}
 	});
 }
