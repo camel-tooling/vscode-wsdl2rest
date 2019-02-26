@@ -194,7 +194,7 @@ function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 
 			let outPath: string = path.join(storagePath, outputDirectory);
 			
-			if (!(wsdlFileUri.startsWith('http:') || !wsdlFileUri.startsWith('https:'))) {
+			if (!(wsdlFileUri.startsWith('http:') || wsdlFileUri.startsWith('https:'))) {
 				if (!wsdlFileUri.startsWith('file:')) {
 					wsdlFileUri = fileUrl(wsdlFileUri);
 				}

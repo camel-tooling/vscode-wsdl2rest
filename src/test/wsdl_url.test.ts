@@ -26,6 +26,7 @@ import * as test_utils from './test_utils';
 import * as app_soap from './app_soap';
 
 // possible wsdl to test - http://www.thomas-bayer.com/axis2/services/BLZService?wsdl
+// possible wsdl to test - https://graphical.weather.gov/xml/SOAP_server/ndfdXMLserver.php?wsdl 
 
 suite("Wsdl2rest Extension Tests from URL-provided wsdl file", function () {
 
