@@ -17,7 +17,7 @@ Current functionality includes:
 If you run into any issues or have suggestions, please file [issues and suggestions on GitHub](https://github.com/camel-tooling/vscode-wsdl2rest/issues).
 
 ## How to install
-(When) the wsdl2rest Extension is available from the [VSCode Marketplace].
+The wsdl2rest Extension is available from the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=camel-tooling.vscode-wsdl2rest).
 
 * Install VS Code
 * Open Extensions View (Ctrl+Shift+X)
