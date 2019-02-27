@@ -1,6 +1,9 @@
 # Change Log
 All notable changes to the "vscode-wsdl2rest" extension will be documented in this file.
 
+## 0.0.6
+- pending
+
 ## 0.0.5
 - addressed issue with URL-based WSDL files https://github.com/camel-tooling/vscode-wsdl2rest/issues/36 
 - addressed issue with focus loss https://github.com/camel-tooling/vscode-wsdl2rest/issues/35
