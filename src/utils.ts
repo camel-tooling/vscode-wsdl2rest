@@ -47,9 +47,10 @@ export function printDebug(message: string) {
 }
 
 export function isAValidUrl(value: string): boolean {
-	// can't be empty
+	// empty is valid for JaxWS and JaxRS URLs, since it will
+	// fall through to get the defaults from wsdl2rest for them
 	if (!value || value.trim().length === 0) {
-		return false;
+		return true;
 	}
 	try {
 		const result = url.parse(value);
@@ -93,4 +94,8 @@ export function makeRandomHexString(length) {
 		result += chars[idx];
 	}
 	return result;
+}
+
+export function isEmpty(str:string) {
+	return (!str || 0 === str.length);
 }
