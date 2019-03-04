@@ -151,26 +151,18 @@ function askForUserInputs(useUrl: boolean): Promise<any> {
 
 			jaxws = await vscode.window.showInputBox({
 				prompt: 'JAXWS Endpoint',
-				placeHolder: 'Enter the address for the running jaxws endpoint',
+				placeHolder: 'Enter the address for the running jaxws endpoint (defaults to http://localhost:8080/somepath)',
 				ignoreFocusOut: true,
-				value: 'http://localhost:8080/somepath',
 				validateInput: (text: string) => validateEndpointUrl(text)
 			});
-			if (!jaxws || jaxws === undefined) {
-				return reject("No valid JAXWS Endpoint specified.");
-			}
 			utils.printDebug("JAXWS Endpoint: " + jaxws);
 
 			jaxrs = await vscode.window.showInputBox({
 				prompt: 'JAXRS Endpoint',
-				placeHolder: 'Enter the address for the jaxrs endpoint',
+				placeHolder: 'Enter the address for the jaxrs endpoint (defaults to http://localhost:8081/jaxrs)',
 				ignoreFocusOut: true,
-				value: 'http://localhost:8081/jaxrs',
 				validateInput: (text: string) => validateEndpointUrl(text)
 			});
-			if (!jaxrs || jaxrs === undefined) {
-				return reject("No valid JAXRS endpoint specified.");
-			}
 			utils.printDebug("JAXRS Endpoint: " + jaxrs);
 			return resolve();
 		} catch (error) {
@@ -260,11 +252,11 @@ function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 						"--wsdl", wsdlFileUri,
 						"--out", outPath,
 						contextType, restContextPath];
-					if (jaxrs) {
+					if (!utils.isEmpty(jaxrs)) {
 						args.push("--jaxrs");
 						args.push(jaxrs);
 					}
-					if (jaxrs) {
+					if (!utils.isEmpty(jaxws)) {
 						args.push("--jaxws");
 						args.push(jaxws);
 					}
