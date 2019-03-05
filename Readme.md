@@ -42,8 +42,8 @@ After that, the two paths converge and you must specify:
 
 * which DSL to generate the Camel configuration for (Spring or Blueprint)
 * the output directory for generated CXF artifacts (defaults to src/main/java)
-* the address for the running jaxws endpoint (such as http://localhost:8080/somepath)
-* the address for the generated jaxrs endpoint (such as http://localhost:8081/jaxrs)
+* an address for the running jaxws endpoint (optional: defaults to http://localhost:8080/somepath) - note that if no address is specified and the WSDL specifies a soap address location in the service/port binding, that will be used instead of the default
+* the address for the generated jaxrs endpoint (optional: defaults to http://localhost:8081/jaxrs)
 
 At the end of the journey, the extension calls the wsdl2rest utility (https://github.com/jboss-fuse/wsdl2rest) to generate a Camel Rest configuration in your chosen DSL, plus the CXF artifacts to harness the power of your SOAP-based JAX-WS service in a RESTful way. 
 
