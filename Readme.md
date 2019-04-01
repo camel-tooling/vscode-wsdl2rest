@@ -3,65 +3,71 @@
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)]()
 [![Gitter](https://img.shields.io/gitter/room/camel-tooling/Lobby.js.svg)](https://gitter.im/camel-tooling/Lobby)
 
-# wsdl2rest for Visual Studio Code
-This preview release of the extension adds wsdl2rest support to [Visual Studio Code](https://code.visualstudio.com/).
+# WSDL to Camel Rest DSL for Visual Studio Code
+This preview release of the extension adds WSDL to REST support to [Visual Studio Code](https://code.visualstudio.com/).
 
-Current functionality includes:
-* Specifying an existing WSDL file in the local file system and generating a Camel Rest DSL + CXF solution around it for REST-style access.
-* Specifying a web-accessible WSDL file and generating a Camel Rest DSL + CXF solution around it for REST-style access.
+ By specifying an existing WSDL file, you can use this extension to generate a Camel Rest DSL + CXF solution for REST-style access. The WSDL file can be located either on your local file system or from an accessible web URL.
 
-
-![wsdl2rest in Command Palette](./images/wsdl2rest-dropdown.png "wsdl2rest in Command Palette")
+Note: For this preview release, the **WSDL to Camel Rest DSL** extension creates Spring, Spring Boot, or Blueprint configurations. Java configurations are not supported yet.
 
 ## Contact Us
-If you run into any issues or have suggestions, please file [issues and suggestions on GitHub](https://github.com/camel-tooling/vscode-wsdl2rest/issues).
+If you run into an issue or have a suggestion, you can report it by [creating a new issue on GitHub](https://github.com/camel-tooling/vscode-wsdl2rest/issues).
 
 ## How to install
-The wsdl2rest Extension is available from the [VSCode Marketplace](https://marketplace.visualstudio.com/items?itemName=camel-tooling.vscode-wsdl2rest).
+You can download this **WSDL to Camel Rest DSL** extension from the Visual Studio Code Marketplace on its own or as part of the [Extension pack for Apache Camel](https://marketplace.visualstudio.com/items?itemName=camel-tooling.apache-camel-extension-pack or as its own) [wsdl2rest extension](https://marketplace.visualstudio.com/items?itemName=camel-tooling.vscode-wsdl2rest).
 
-* Install VS Code
-* Open Extensions View (Ctrl+Shift+X)
-* Search for "Camel"
-* Select the "wsdl2rest for Visual Studio Code" entry and click Install
-* Profit!
+After you install VS Code, follow these steps:
+1. In VS Code, select **View > Extensions**.
+2. Search for **Camel**.
+3. Select the **Extension Pack for Apache Camel** or the **WSDL to Camel Rest DSL** option and then click **Install**.
+
+## Before you begin
+Before you use this **WSDL to Camel Rest DSL** extension, you should create a mavenized Camel- or Fuse-based project, such as one of the following:
+
+* A project that you create with the [Project Initializer by Red Hat VS Code extension](https://marketplace.visualstudio.com/items?itemName=redhat.project-initializer).   
+Note: This extension is included in the [Extension pack for Apache Camel](https://marketplace.visualstudio.com/items?itemName=camel-tooling.apache-camel-extension-pack).
+
+* A standalone Camel- or Fuse-based Spring project based on an existing example or a quickstart, for example:  
+https://github.com/apache/camel/tree/master/examples/camel-example-spring  
+or  
+https://github.com/jboss-fuse/quickstarts/tree/master/beginner/camel-cbr
+
+* A Maven project created by using [mvn:archetype](http://camel.apache.org/camel-maven-archetypes.html) with camel-archetype-spring, camel-archetype-blueprint, or camel-archetype-spring-boot.
+
+After you create a project, you can then use the **WSDL to Camel Rest DSL** extension to generate the Camel Rest DSL + CXF solution for REST-style access. 
 
 ## Using the extension
-There are two main options for using the extension to generate your Camel configuration. To start the process, inside VS Code, press `F1` or `Ctrl+Shift+P` to bring up the Command Palette, and type `wsdl2rest`. Then you must choose whether you're going to use a local WSDL file or a WSDL somewhere on the network.
+To generate your Camel configuration from a WSDL file:
 
-To reference a WSDL file in your local file system:
+1. In VS Code, create a new workspace and then add the Camel- or Fuse-based project folder to the workspace.
 
-* Select the 'wsdl2rest: Create Camel Rest DSL configuration from local WSDL file' option in the list.
-* In the File dialog that appears, browse to find your WSDL file in the local file system.
+2. Select **View > Command Palette** and then type **wsdl2rest**.  
+  
+  ![wsdl2rest in Command Palette](./images/wsdl2rest-dropdown.png "wsdl2rest in Command Palette")
 
-To reference a WSDL located somewhere on the Internet (or Intranet) with a URL:
+3. Select whether to use a local WSDL file or a WSDL URL.
 
-* Select the 'wsdl2rest: Create Camel Rest DSL configuration from WSDL file URL' option in the list.
-* In the drop-down that appears, type the URL to the WSDL you wish to access.
+  * For a local WSDL file: In the File dialog that appears, browse to find the WSDL file in your local file system.
+  
+  * For a WSDL file URL: In the drop-down that appears, type the URL to the WSDL that you want to access.
 
-After that, the two paths converge and you must specify:
+4. Specify the DSL (Spring or Blueprint) for the generated Camel configuration.  
 
-* which DSL to generate the Camel configuration for (Spring or Blueprint)
-* the output directory for generated CXF artifacts (defaults to src/main/java)
-* an address for the running jaxws endpoint (optional: defaults to http://localhost:8080/somepath) - note that if no address is specified and the WSDL specifies a soap address location in the service/port binding, that will be used instead of the default
-* the address for the generated jaxrs endpoint (optional: defaults to http://localhost:8081/jaxrs)
+5. Specify the output directory for the generated CXF artifacts. The default directory is `src/main/java`.  
+  
+  **Important note:** You should change the output directory to a different folder if you do not want the extension to overwrite  existing classes with the same package or class name.
 
-At the end of the journey, the extension calls the wsdl2rest utility (https://github.com/jboss-fuse/wsdl2rest) to generate a Camel Rest configuration in your chosen DSL, plus the CXF artifacts to harness the power of your SOAP-based JAX-WS service in a RESTful way. 
+6. (Optional) Specify the address for the running JAX-WS endpoint. The default address is http://localhost:8080/somepath  
+  
+  Note: If you accept the default address and the WSDL file's `service/port` binding specifies a SOAP address location, then the generated Camel configuration uses that SOAP address instead of the default address.
+7. (Optional) Specify the address for the generated JAX-RS endpoint. The default address is http://localhost:8081/jaxrs  
 
-## Caveats for using this extension
+  The extension generates:
+  * A Camel Rest configuration in your chosen DSL
+  * The CXF artifacts to harness the power of your SOAP-based JAX-WS service in a RESTful way
 
-The wsdl2rest extension only creates the Camel Rest DSL configuration (Spring- or Blueprint-based, not Java at this time) and any
-associated CXF files to enable access to the SOAP service in a RESTful way. It does not create the project or update it to enable
-you to use the generated artifacts right away.
 
-We recommend creating a mavenized Camel- or Fuse-based project ahead of time and then using this extension to generate
-the projects within it. This project can be created in many ways, such as (but not limited to):
-
-* A standalone Camel- or Fuse-based Spring project based on an existing example or quickstart (such as https://github.com/apache/camel/tree/master/examples/camel-example-spring or https://github.com/jboss-fuse/quickstarts/tree/master/beginner/camel-cbr)
-* A Maven project created using mvn:archetype (http://camel.apache.org/camel-maven-archetypes.html) with camel-archetype-spring, camel-archetype-blueprint, or camel-archetype-spring-boot.
-* A project created with the Project Initializer by Red Hat VS Code extension (https://marketplace.visualstudio.com/items?itemName=redhat.project-initializer)
-
-With the project in place, you can use the wsdl2rest Extension to generate the necessary artifacts there, then you may have to 
-update the Maven configuration with a few additional dependencies as follows.
+8. Before you build or run the generated code, check the Maven configuration for your project and update it to include the following dependencies, if needed:
 
 ### Spring- and Spring Boot-based projects
 
