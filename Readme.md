@@ -8,13 +8,13 @@ This preview release of the extension adds WSDL to REST support to [Visual Studi
 
  By specifying an existing WSDL file, you can use this extension to generate a Camel Rest DSL + CXF solution for REST-style access. The WSDL file can be located either on your local file system or from an accessible web URL.
 
-Note: For this preview release, the **WSDL to Camel Rest DSL** extension creates Spring Boot and Blueprint configurations. Java configuratons are not supported yet.
+Note: For this preview release, the **WSDL to Camel Rest DSL** extension creates Spring, Spring Boot, or Blueprint configurations. Java configurations are not supported yet.
 
 ## Contact Us
 If you run into an issue or have a suggestion, you can report it by [creating a new issue on GitHub](https://github.com/camel-tooling/vscode-wsdl2rest/issues).
 
 ## How to install
-You can download this **WSDL to Camel Rest DSL** extension from the Visual Studio Code Marketplace on its own or as part of the [Extension pack for Apache Camel](https://marketplace.visualstudio.com/items?itemName=camel-tooling.apache-camel-extension-pack or as its own [wsdl2rest extension](https://marketplace.visualstudio.com/items?itemName=camel-tooling.vscode-wsdl2rest).
+You can download this **WSDL to Camel Rest DSL** extension from the Visual Studio Code Marketplace on its own or as part of the [Extension pack for Apache Camel](https://marketplace.visualstudio.com/items?itemName=camel-tooling.apache-camel-extension-pack or as its own) [wsdl2rest extension](https://marketplace.visualstudio.com/items?itemName=camel-tooling.vscode-wsdl2rest).
 
 After you install VS Code, follow these steps:
 1. In VS Code, select **View > Extensions**.
@@ -41,7 +41,7 @@ To generate your Camel configuration from a WSDL file:
 
 1. In VS Code, create a new workspace and then add the Camel- or Fuse-based project folder to the workspace.
 
-2. Select **View > Command Palette** and then type **WSDL to Camel Rest DSL**.  
+2. Select **View > Command Palette** and then type **wsdl2rest**.  
   
   ![wsdl2rest in Command Palette](./images/wsdl2rest-dropdown.png "wsdl2rest in Command Palette")
 
