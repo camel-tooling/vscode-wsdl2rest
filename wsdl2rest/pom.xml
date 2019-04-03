@@ -10,7 +10,7 @@
 
     <properties>
         <!-- update this with final version when available -->
-        <version.wsdl2rest>0.8.0.fuse-730050</version.wsdl2rest>
+        <version.wsdl2rest>0.8.0.fuse-730090</version.wsdl2rest>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
