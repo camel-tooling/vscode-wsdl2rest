@@ -2,7 +2,7 @@
 All notable changes to the "vscode-wsdl2rest" extension will be documented in this file.
 
 ## 0.0.7
-- pending
+- updated readme with additional help and clarification
 
 ## 0.0.6
 - updated to use wsdl2rest version 0.8.0.fuse-730050
