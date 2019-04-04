@@ -42,8 +42,8 @@ To generate your Camel configuration from a WSDL file:
 1. In VS Code, create a new workspace and then add the Camel- or Fuse-based project folder to the workspace.
 
 2. Select **View > Command Palette** and then type **wsdl2rest**.  
-  
-  ![wsdl2rest in Command Palette](./images/wsdl2rest-dropdown.png "wsdl2rest in Command Palette")
+
+      ![wsdl2rest in Command Palette](./images/wsdl2rest-dropdown.png "wsdl2rest in Command Palette")
 
 3. Select whether to use a local WSDL file or a WSDL URL.
 
@@ -55,19 +55,20 @@ To generate your Camel configuration from a WSDL file:
 
 5. Specify the output directory for the generated CXF artifacts. The default directory is `src/main/java`.  
   
-  **Important note:** You should change the output directory to a different folder if you do not want the extension to overwrite  existing classes with the same package or class name.
+      **Important note:** You should change the output directory to a different folder if you do not want the extension to overwrite  existing classes with the same package or class name.
 
 6. (Optional) Specify the address for the running JAX-WS endpoint. The default address is http://localhost:8080/somepath  
   
-  Note: If you accept the default address and the WSDL file's `service/port` binding specifies a SOAP address location, then the generated Camel configuration uses that SOAP address instead of the default address.
+      **Note:** If you accept the default address and the WSDL file's `service/port` binding specifies a SOAP address location, then the generated Camel configuration uses that SOAP address instead of the default address.
+  
 7. (Optional) Specify the address for the generated JAX-RS endpoint. The default address is http://localhost:8081/jaxrs  
 
-  The extension generates:
+      The extension generates:
   * A Camel Rest configuration in your chosen DSL
   * The CXF artifacts to harness the power of your SOAP-based JAX-WS service in a RESTful way
 
 
-8. Before you build or run the generated code, check the Maven configuration for your project and update it to include the following dependencies, if needed:
+8. Before you build or run the generated code, check the Maven configuration for your project and update it to include the following dependencies as needed:
 
 ### Spring- and Spring Boot-based projects
 
