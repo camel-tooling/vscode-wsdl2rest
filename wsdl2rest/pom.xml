@@ -10,7 +10,7 @@
 
     <properties>
         <!-- update this with final version when available -->
-        <version.wsdl2rest>0.8.0.fuse-730090</version.wsdl2rest>
+        <version.wsdl2rest>0.8.0.fuse-730094-redhat-00001</version.wsdl2rest>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -27,7 +27,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>2.1.0.RELEASE</version>
+                <version>2.1.4.RELEASE</version>
                 <executions>
                     <execution>
                         <goals>

@@ -85,7 +85,7 @@
         "sinon-chai": "^3.3.0",
         "tslint": "^5.12.1",
         "typescript": "^3.2.4",
-        "vscode": "^1.1.29"
+        "vscode": "^1.1.33"
     },
     "dependencies": {
         "child_process": "^1.0.2",
