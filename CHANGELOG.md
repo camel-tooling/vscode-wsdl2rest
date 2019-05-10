@@ -2,6 +2,10 @@
 
 All notable changes to the "vscode-wsdl2rest" extension will be documented in this file.
 
+## 0.0.9
+
+- tbd
+
 ## 0.0.8
 
 - updating version of wsdl2rest to 0.8.0.fuse-730094-redhat-00001 (final version for Fuse 7.3 release)
