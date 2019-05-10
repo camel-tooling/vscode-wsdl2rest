@@ -4,7 +4,9 @@ All notable changes to the "vscode-wsdl2rest" extension will be documented in th
 
 ## 0.0.8
 
-- pending
+- updating version of wsdl2rest to 0.8.0.fuse-730094-redhat-00001 (final version for Fuse 7.3 release)
+- updated spring-boot-maven-plugin version to 2.1.4.RELEASE (April 2019 release)
+- updating readme upstream for published vscode-wsdl2rest release
 
 ## 0.0.7
 
