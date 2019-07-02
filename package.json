@@ -4,7 +4,7 @@
     "description": "A VS Code extension supporting wsdl2rest via Camel Rest DSL",
     "license": "Apache-2.0",
     "version": "0.0.9",
-    "publisher": "camel-tooling",
+    "publisher": "redhat",
     "icon": "icons/icon128.png",
     "preview": true,
     "repository": {

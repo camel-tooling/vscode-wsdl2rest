@@ -24,7 +24,7 @@ import * as path from 'path';
 import * as fileUrl from 'file-url';
 import * as app_soap from './app_soap';
 
-const extensionId = 'camel-tooling.vscode-wsdl2rest';
+const extensionId = 'redhat.vscode-wsdl2rest';
 
 suite("ensure Wsdl2rest extension exists and is accessible", async function() {
 	test('Extension should be present', () => {
