@@ -25,14 +25,6 @@ cache:
   directories:
     - "node_modules"
 env: DISPLAY=:99
-deploy:
-- provider: script
-  script: vsce publish -p $VSCODE_TOKEN
-  skip_cleanup: true
-  on:
-    repo: camel-tooling/vscode-wsdl2rest
-    branch: master
-    tags: true
 addons:
   sonarcloud:
     organization: "camel-tooling"
