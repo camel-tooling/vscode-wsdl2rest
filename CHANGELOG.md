@@ -2,6 +2,8 @@
 
 All notable changes to the "vscode-wsdl2rest" extension will be documented in this file.
 
+## 0.0.10
+
 ## 0.0.9
 
 - move to Red Hat publisher to gain visibility
