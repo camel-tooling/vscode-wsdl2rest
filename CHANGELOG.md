@@ -4,6 +4,8 @@ All notable changes to the "vscode-wsdl2rest" extension will be documented in th
 
 ## 0.0.10
 
+- Update to naming approved by Red Hat legal
+
 ## 0.0.9
 
 - move to Red Hat publisher to gain visibility

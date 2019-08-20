@@ -14,7 +14,7 @@ Note: For this preview release, the **WSDL to Camel Rest DSL** extension creates
 If you run into an issue or have a suggestion, you can report it by [creating a new issue on GitHub](https://github.com/camel-tooling/vscode-wsdl2rest/issues).
 
 ## How to install
-You can download this **WSDL to Camel Rest DSL** extension from the Visual Studio Code Marketplace on its own or as part of the [Extension pack for Apache Camel](https://marketplace.visualstudio.com/items?itemName=camel-tooling.apache-camel-extension-pack or as its own) [wsdl2rest extension](https://marketplace.visualstudio.com/items?itemName=camel-tooling.vscode-wsdl2rest).
+You can download this **WSDL to Camel Rest DSL** extension from the Visual Studio Code Marketplace on its own or as part of the [Extension pack for Apache Camel by Red Hat](https://marketplace.visualstudio.com/items?itemName=camel-tooling.apache-camel-extension-pack or as its own) [wsdl2rest extension by Red Hat](https://marketplace.visualstudio.com/items?itemName=camel-tooling.vscode-wsdl2rest).
 
 After you install VS Code, follow these steps:
 1. In VS Code, select **View > Extensions**.
