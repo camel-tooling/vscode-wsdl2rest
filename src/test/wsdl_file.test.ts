@@ -83,6 +83,18 @@ suite("Wsdl2rest Extension Tests from wsdl file - spring", async function () {
 		assert.ok(fs.existsSync(path.join(projectdir, '/src/main/resources/OSGI-INF/blueprint/blueprint.xml')));
 		assert.ok(fs.existsSync(path.join(projectdir, '/src/main/java/org/jboss/fuse/wsdl2rest/test/doclit/AddAddress.java')));
 	});	
+
+	test("should be able to run command: extension.wsdl2rest - with local wsdl file - spring-boot", async function() {
+
+		await test_utils.cleanup(projectdir);
+		showQuickPickStub.onFirstCall().returns('Spring-Boot');
+
+		await vscode.commands.executeCommand('extension.wsdl2rest.local'); 
+
+		assert.ok(fs.existsSync(path.join(__dirname, './config/logging.properties')));
+		assert.ok(fs.existsSync(path.join(projectdir, '/src/main/resources/camel-context.xml')));
+		assert.ok(fs.existsSync(path.join(projectdir, '/src/main/java/org/jboss/fuse/wsdl2rest/test/doclit/AddAddress.java')));
+	});	
 });
 
 suite("Wsdl2rest Extension Tests from wsdl file - spring - with no jaxws or jaxrs URLs specified", async function () {

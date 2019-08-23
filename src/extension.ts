@@ -126,7 +126,8 @@ function askForUserInputs(useUrl: boolean): Promise<any> {
 			dsl = await vscode.window.showQuickPick(
 				[
 					utils.DslType.Spring, 
-					utils.DslType.Blueprint
+					utils.DslType.Blueprint,
+					utils.DslType.SpringBoot
 				],
 				{
 					placeHolder: 'Specify which DSL to generate the Camel configuration for'
