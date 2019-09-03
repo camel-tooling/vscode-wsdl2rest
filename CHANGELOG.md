@@ -2,6 +2,8 @@
 
 All notable changes to the "vscode-wsdl2rest" extension will be documented in this file.
 
+## 0.0.11
+
 ## 0.0.10
 
 - Update to naming approved by Red Hat legal
