@@ -69,7 +69,7 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
-        "@types/chai": "^4.2.0",
+        "@types/chai": "^4.2.1",
         "@types/mocha": "^5.2.7",
         "@types/node": "^12.7.3",
         "@types/sinon": "^7.0.13",
