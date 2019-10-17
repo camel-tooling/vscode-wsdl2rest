@@ -92,7 +92,7 @@
         "child_process": "^1.0.2",
         "expand-home-dir": "^0.0.3",
         "file-url": "^3.0.0",
-        "find-java-home": "^1.0.1",
+        "find-java-home": "^1.1.0",
         "fs": "^0.0.1-security",
         "fs-extra": "^8.1.0",
         "path": "^0.12.7",
