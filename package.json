@@ -34,7 +34,7 @@
         "Tool"
     ],
     "engines": {
-        "vscode": "^1.29.1"
+        "vscode": "^1.39.0"
     },
     "categories": [
         "Other"
@@ -63,8 +63,7 @@
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
         "preinstall": "node ./scripts/preinstall.js",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "npm run compile && node ./node_modules/vscode/bin/test"
+        "test": "node ./out/test/runTest.js"
     },
     "devDependencies": {
         "@types/chai": "^4.2.4",
@@ -72,6 +71,7 @@
         "@types/node": "^12.12.6",
         "@types/sinon": "^7.5.0",
         "@types/sinon-chai": "^3.2.3",
+        "@types/vscode": "^1.39.0",
         "assert": "^2.0.0",
         "chai": "^4.2.0",
         "gulp": "^4.0.2",
@@ -84,7 +84,7 @@
         "sinon-chai": "^3.3.0",
         "tslint": "^5.20.1",
         "typescript": "^3.7.2",
-        "vscode": "^1.1.36"
+        "vscode-test": "^1.2.2"
     },
     "dependencies": {
         "child_process": "^1.0.2",
