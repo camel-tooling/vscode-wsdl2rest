@@ -36,6 +36,7 @@ let dsl: string;
 let jaxrs: string;
 let jaxws: string;
 let readmePath: string;
+let storagePath : string | undefined;
 
 export function activate(context: vscode.ExtensionContext) {
 	
@@ -44,6 +45,11 @@ export function activate(context: vscode.ExtensionContext) {
 	outputChannel = vscode.window.createOutputChannel("WSDL2Rest");
 	context.subscriptions.push(vscode.commands.registerCommand('extension.wsdl2rest.local', () => callWsdl2RestViaUIAsync(false)));
 	context.subscriptions.push(vscode.commands.registerCommand('extension.wsdl2rest.url', () => callWsdl2RestViaUIAsync(true)));
+}
+
+// note this is just exposed for testing purposes
+export function getStoragePath() : string {
+	return storagePath;
 }
 
 function callWsdl2RestViaUIAsync(useUrl: boolean): Promise<string> {
@@ -175,8 +181,10 @@ function askForUserInputs(useUrl: boolean): Promise<any> {
 function callWsdl2Rest(wsdl2restExecutablePath: string): Promise<boolean> {
 	return new Promise( (resolve, reject) => {
 		try {
-			let storagePath: string = vscode.workspace.rootPath; // is undefined for some unknown reason
-			if (!storagePath) {
+			if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders[0]) {
+				storagePath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+			}
+			if (!storagePath) { // i.e. the workspace was empty
 				storagePath = utils.getTempWorkspace();
 			}
 
