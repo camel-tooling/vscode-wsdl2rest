@@ -24,6 +24,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as test_utils from './test_utils';
 import { expect } from 'chai';
+import { getStoragePath } from '../extension';
 
 suite("Wsdl2rest Extension Tests from wsdl file - spring", async function () {
 
@@ -67,9 +68,18 @@ suite("Wsdl2rest Extension Tests from wsdl file - spring", async function () {
 
 		await vscode.commands.executeCommand('extension.wsdl2rest.local'); 
 
-		assert.ok(fs.existsSync(path.join(__dirname, './config/logging.properties')));
-		assert.ok(fs.existsSync(path.join(projectdir, '/src/main/resources/META-INF/spring/camel-context.xml')));
-		assert.ok(fs.existsSync(path.join(projectdir, '/src/main/java/org/jboss/fuse/wsdl2rest/test/doclit/AddAddress.java')));
+		let storageDir = getStoragePath();
+		console.log(`Project is at ${storageDir}`);
+
+		projectdir = path.join(storageDir, 'myproject');
+
+		const logPath = path.join(storageDir, '/config/logging.properties');
+		const contextPath = path.join(projectdir, '/src/main/resources/META-INF/spring/camel-context.xml');
+		const generatedClassPath = path.join(projectdir, '/src/main/java/org/jboss/fuse/wsdl2rest/test/doclit/AddAddress.java');
+
+		assert.ok(fs.existsSync(logPath));
+		assert.ok(fs.existsSync(contextPath));
+		assert.ok(fs.existsSync(generatedClassPath));
 	});	
 
 	test("should be able to run command: extension.wsdl2rest - with local wsdl file - blueprint", async function() {
@@ -79,7 +89,12 @@ suite("Wsdl2rest Extension Tests from wsdl file - spring", async function () {
 
 		await vscode.commands.executeCommand('extension.wsdl2rest.local'); 
 
-		assert.ok(fs.existsSync(path.join(__dirname, './config/logging.properties')));
+		let storageDir = getStoragePath();
+		console.log(`Project is at ${storageDir}`);
+
+		projectdir = path.join(storageDir, 'myproject');
+
+		assert.ok(fs.existsSync(path.join(storageDir, './config/logging.properties')));
 		assert.ok(fs.existsSync(path.join(projectdir, '/src/main/resources/OSGI-INF/blueprint/blueprint.xml')));
 		assert.ok(fs.existsSync(path.join(projectdir, '/src/main/java/org/jboss/fuse/wsdl2rest/test/doclit/AddAddress.java')));
 	});	
@@ -133,6 +148,11 @@ suite("Wsdl2rest Extension Tests from wsdl file - spring - with no jaxws or jaxr
 
 		await vscode.commands.executeCommand('extension.wsdl2rest.local'); 
 
+		let storageDir = getStoragePath();
+		console.log(`Project is at ${storageDir}`);
+
+		projectdir = path.join(storageDir, 'myproject');
+		
 		let configPath = path.join(projectdir, '/src/main/resources/META-INF/spring/camel-context.xml');
 		assert.ok(fs.existsSync(configPath));
 

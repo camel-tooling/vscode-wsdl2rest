@@ -24,6 +24,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as test_utils from './test_utils';
 import * as app_soap from './app_soap';
+import { getStoragePath } from '../extension';
 
 // possible wsdl to test - http://www.thomas-bayer.com/axis2/services/BLZService?wsdl
 // possible wsdl to test - https://graphical.weather.gov/xml/SOAP_server/ndfdXMLserver.php?wsdl 
@@ -77,7 +78,12 @@ suite("Wsdl2rest Extension Tests from URL-provided wsdl file", function () {
 
 		await vscode.commands.executeCommand('extension.wsdl2rest.url'); 
 
-		assert.ok(fs.existsSync(path.join(__dirname, './config/logging.properties')));
+		let storageDir = getStoragePath();
+		console.log(`Project is at ${storageDir}`);
+
+		projectdir = path.join(storageDir, 'myproject');
+
+		assert.ok(fs.existsSync(path.join(storageDir, './config/logging.properties')));
 		assert.ok(fs.existsSync(path.join(projectdir, '/src/main/resources/META-INF/spring/camel-context.xml')));
 		assert.ok(fs.existsSync(path.join(projectdir, '/src/main/java/org/helloworld/test/rpclit/HelloService.java')));
 
