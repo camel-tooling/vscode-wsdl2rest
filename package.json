@@ -14,18 +14,16 @@
     "bugs": {
         "url": "https://github.com/camel-tooling/vscode-wsdl2rest/issues"
     },
-    "author": [
-        {
-            "name": "Brian Fitzpatrick",
-            "email": "bfitzpat@redhat.com",
-            "url": "http://redhat.com"
-        }
-    ],
+    "author": {
+        "name": "Brian Fitzpatrick",
+        "email": "bfitzpat@redhat.com",
+        "url": "https://redhat.com"
+    },
     "maintainers": [
         {
             "name": "Brian Fitzpatrick",
             "email": "bfitzpat@redhat.com",
-            "url": "http://redhat.com"
+            "url": "https://redhat.com"
         }
     ],
     "homepage": "https://github.com/camel-tooling/vscode-wsdl2rest",
