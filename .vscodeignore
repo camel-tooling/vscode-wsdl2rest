@@ -1,12 +1,15 @@
+**/*.ts
+**/tsconfig.json
 .vscode/**
 .vscode-test/**
 out/test/**
+out/ui-test/**
 out/**/*.map
 src/**
 .gitignore
 sonar-project.properties
-tsconfig.json
 vsc-extension-quickstart.md
 tslint.json
 wsdl2rest/target/**
 test-resources
+.ui-testing
