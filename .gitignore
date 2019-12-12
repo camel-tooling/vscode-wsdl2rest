@@ -4,3 +4,4 @@ node_modules
 *.vsix
 wsdl2rest/target/
 *.log
+test-resources/
