@@ -5,3 +5,7 @@ node_modules
 wsdl2rest/target/
 *.log
 test-resources/
+.project
+.classpath
+.factorypath
+src/ui-test/runtimes/**/target
