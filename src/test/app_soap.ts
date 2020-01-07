@@ -28,7 +28,7 @@ var helloworldservice = {
 			sayHello: function (args, callback) {
 				// do some work
 				console.log('sayHello: ' + JSON.stringify(args));
-				callback({'greeting': 'Hello '+ args.firstName});
+				callback({ 'greeting': 'Hello ' + args.firstName });
 			}
 		}
 	}
@@ -36,30 +36,30 @@ var helloworldservice = {
 
 var wsdlFile = path.join(__dirname, '../../src/test/helloworld.wsdl');
 
-var wsdlxml = require('fs').readFileSync(wsdlFile, 'utf8'),
-	server = http.createServer(function (request, response) {
-		response.end("404: Not Found: " + request.url);
-	});
-
+var wsdlxml = require('fs').readFileSync(wsdlFile, 'utf8');
+var server = null;
 var PORT = 3000;
 
 export function startWebService() {
+	server = http.createServer(function (request, response) {
+		response.end("404: Not Found: " + request.url);
+	});
 	server.listen(PORT);
 	console.log('server running on port ' + PORT);
 
 	soap.listen(server, '/helloworldservice', helloworldservice, wsdlxml);
 }
 
-export function stopWebService () {
-	server.close(function() {
+export function stopWebService() {
+	server.close(function () {
 		server = null;
 	});
 }
 
-export function getServiceURL () {
+export function getServiceURL() {
 	return 'http://localhost:' + PORT + '/helloworldservice';
 }
 
-export function getWSDLURL () {
+export function getWSDLURL() {
 	return getServiceURL() + '?wsdl';
 }

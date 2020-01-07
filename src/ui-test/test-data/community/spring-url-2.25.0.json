@@ -1,0 +1,6 @@
+{
+    "framework": "spring",
+    "type": "url",
+    "camelVersion": "2.25.0",
+    "camelMavenPluginVersion": "2.24.3"
+}
