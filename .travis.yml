@@ -18,12 +18,14 @@ install:
   - 'vsce package'  
 script:
   - 'npm test --silent'
+  - 'npm run ui-test --silent'
 after_success:
   - if [[ $TRAVIS_PULL_REQUEST == "false" && $TRAVIS_BRANCH == "master" ]]; then
     sonar-scanner;
     fi
 cache:
   directories:
+    - "$HOME/.m2"
     - "node_modules"
 env: DISPLAY=:99
 branches:
