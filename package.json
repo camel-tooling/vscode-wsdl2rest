@@ -62,7 +62,7 @@
         "clean": "rm -rf out || rmdir out /s /q",
         "compile": "tsc -p ./",
         "watch": "tsc -watch -p ./",
-        "preinstall": "node ./scripts/preinstall.js",
+        "postinstall": "node ./scripts/postinstall.js",
         "test": "node ./out/test/runTest.js",
         "lint": "tslint --project .",
         "ui-test": "extest setup-and-run out/ui-test/extension.all.test.js"
