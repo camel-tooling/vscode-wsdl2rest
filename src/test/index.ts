@@ -11,7 +11,7 @@ export function run(): Promise<void> {
 		reporter: 'mocha-jenkins-reporter'
 	});
 
-	const testsRoot = path.resolve(__dirname, '..');
+	const testsRoot = __dirname;
 
 	return new Promise((c, e) => {
 		glob('**/**.test.js', { cwd: testsRoot }, (err, files) => {
