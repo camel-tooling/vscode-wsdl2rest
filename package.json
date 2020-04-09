@@ -34,7 +34,7 @@
         "Tool"
     ],
     "engines": {
-        "vscode": "^1.43.0"
+        "vscode": "^1.44.0"
     },
     "categories": [
         "Other"
@@ -70,10 +70,10 @@
     "devDependencies": {
         "@types/chai": "^4.2.11",
         "@types/mocha": "^7.0.2",
-        "@types/node": "^13.11.0",
+        "@types/node": "^13.11.1",
         "@types/sinon": "^9.0.0",
         "@types/sinon-chai": "^3.2.4",
-        "@types/vscode": "^1.43.0",
+        "@types/vscode": "^1.44.0",
         "assert": "^2.0.0",
         "chai": "^4.2.0",
         "gulp": "^4.0.2",
@@ -82,7 +82,7 @@
         "mocha-jenkins-reporter": "^0.4.1",
         "mvn-artifact-download": "^4.1.0",
         "request": "^2.88.2",
-        "sinon": "^9.0.1",
+        "sinon": "^9.0.2",
         "sinon-chai": "^3.5.0",
         "tslint": "^6.1.1",
         "typescript": "^3.8.3",
