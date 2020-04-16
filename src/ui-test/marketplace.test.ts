@@ -15,8 +15,8 @@
  * limitations under the License.
  */
 
-import { CommandPalette, DefaultWait, Marketplace } from 'vscode-uitests-tooling';
-import { EditorView, ExtensionsViewItem } from 'vscode-extension-tester';
+import { DefaultWait, Marketplace } from 'vscode-uitests-tooling';
+import { EditorView, ExtensionsViewItem, InputBox, Workbench } from 'vscode-extension-tester';
 import { expect } from 'chai';
 import { getPackageData, PackageData } from './package_data';
 
@@ -63,7 +63,7 @@ export function test() {
 		});
 
 		it('Registered all commands', async function () {
-			const cmd = await CommandPalette.open();
+			const cmd = await new Workbench().openCommandPrompt() as InputBox;
 			await cmd.setText('>wsdl2rest');
 			// wait for suggestions to show
 			await DefaultWait.sleep(750);
