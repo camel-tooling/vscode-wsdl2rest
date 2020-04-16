@@ -120,8 +120,7 @@ export function test(args: TestArguments) {
 
 		it(`Execute command: ${command.command}`, async function () {
 			this.timeout(6000);
-			const cmd = await CommandPalette.open();
-			await cmd.executeCommand(command.title);
+			await new Workbench().executeCommand(command.title);
 		});
 
 		it(`Open wsdl file [${args.type}]`, async function () {
@@ -129,10 +128,9 @@ export function test(args: TestArguments) {
 			switch (args.type) {
 				case 'url':
 					const input = await getInput();
-					input.test({
-						placeholder: 'Provide the URL for the WSDL file',
-						message: 'WSDL URL (Press \'Enter\' to confirm or \'Escape\' to cancel)'
-					});
+
+					expect(await input.getPlaceHolder()).to.be.equal('Provide the URL for the WSDL file');
+					expect(await input.getMessage()).to.be.equal('WSDL URL (Press \'Enter\' to confirm or \'Escape\' to cancel)');
 
 					await input.setText(WSDL_URL);
 					await input.confirm();
@@ -149,10 +147,8 @@ export function test(args: TestArguments) {
 		it(`Select '${args.framework}' option`, async function () {
 			const input = await getInput();
 
-			await input.test({
-				placeholder: 'Specify which DSL to generate the Camel configuration for',
-				quickPicks: ['Spring', 'Blueprint']
-			});
+			expect(await input.getPlaceHolder()).to.be.equal('Specify which DSL to generate the Camel configuration for');
+			expect(await getQuickPicks(input)).to.be.deep.equal(['Spring', 'Blueprint']);
 
 			await input.setText(args.framework);
 			await input.confirm();
@@ -161,11 +157,9 @@ export function test(args: TestArguments) {
 		it(`Confirm output directory`, async function () {
 			const input = await getInput();
 
-			await input.test({
-				placeholder: 'Enter the output directory for generated artifacts',
-				message: 'Output Directory (Press \'Enter\' to confirm or \'Escape\' to cancel)',
-				text: 'src/main/java'
-			});
+			expect(await input.getPlaceHolder()).to.be.equal('Enter the output directory for generated artifacts');
+			expect(await input.getMessage()).to.be.equal('Output Directory (Press \'Enter\' to confirm or \'Escape\' to cancel)');
+			expect(await input.getText()).to.be.equal('src/main/java');
 
 			await input.confirm();
 		});
@@ -173,10 +167,8 @@ export function test(args: TestArguments) {
 		it('Confirm JAX-WS endpoint', async function () {
 			const input = await getInput();
 
-			await input.test({
-				placeholder: 'Enter the address for the running jaxws endpoint (defaults to http://localhost:8080/somepath)',
-				message: 'JAXWS Endpoint (Press \'Enter\' to confirm or \'Escape\' to cancel)'
-			});
+			expect(await input.getPlaceHolder()).to.be.equal('Enter the address for the running jaxws endpoint (defaults to http://localhost:8080/somepath)');
+			expect(await input.getMessage()).to.be.equal('JAXWS Endpoint (Press \'Enter\' to confirm or \'Escape\' to cancel)');
 
 			await input.confirm();
 		});
@@ -184,10 +176,9 @@ export function test(args: TestArguments) {
 		it('Confirm JAX-RS endpoint', async function () {
 			const input = await getInput();
 
-			await input.test({
-				placeholder: 'Enter the address for the jaxrs endpoint (defaults to http://localhost:8081/jaxrs)',
-				message: 'JAXRS Endpoint (Press \'Enter\' to confirm or \'Escape\' to cancel)'
-			});
+
+			expect(await input.getPlaceHolder()).to.be.equal('Enter the address for the jaxrs endpoint (defaults to http://localhost:8081/jaxrs)');
+			expect(await input.getMessage()).to.be.equal('JAXRS Endpoint (Press \'Enter\' to confirm or \'Escape\' to cancel)');
 
 			await input.setText('http://localhost:8000/jaxrs');
 			await input.confirm();
@@ -444,7 +435,11 @@ function getExpectedFileList(args: TestArguments): string[] {
 	return files;
 }
 
-async function getInput(): Promise<Input> {
-	await InputBox.create();
-	return Input.getInstance();
+async function getInput(): Promise<InputBox> {
+	return InputBox.create();
 } 
+
+async function getQuickPicks(input: InputBox) {
+	const quickPicks = await input.getQuickPicks();
+	return Promise.all(quickPicks.map(async (q) => await q.getText()));
+}
