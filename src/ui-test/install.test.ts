@@ -15,20 +15,18 @@
  * limitations under the License.
  */
 
-import { DefaultWait, Marketplace } from 'vscode-uitests-tooling';
 import {
 	EditorView,
 	ExtensionsViewItem,
 	ExtensionsViewSection,
-	InputBox,
-	SideBarView,
-	Workbench,
+	SideBarView
 } from 'vscode-extension-tester';
 import { expect } from 'chai';
 import { getPackageData, PackageData } from './package_data';
+import { Marketplace } from 'vscode-uitests-tooling';
 
 export function test() {
-	describe('Marketplace extension test', function () {
+	describe('Marketplace install test', function () {
 		this.timeout(3500);
 		let packageData: PackageData;
 		let marketplace: Marketplace;
@@ -43,6 +41,7 @@ export function test() {
 		});
 
 		after('Clear workspace', async function () {
+			this.timeout(10000);
 			await section.clearSearch();
 			await Promise.all([
 				marketplace.close(),
@@ -52,37 +51,18 @@ export function test() {
 
 		it('Find extension', async function () {
 			this.timeout(10000);
-			wsdl2restExtension = await section.findItem(`@installed ${packageData.displayName}`);
+			wsdl2restExtension = await section.findItem(packageData.displayName);
 			expect(wsdl2restExtension).not.to.be.undefined;
 		});
 
-		it('Extension is installed', async function () {
+		it('Extension is not installed', async function () {
+			expect(await wsdl2restExtension.isInstalled()).to.be.false;
+		});
+
+		it('Installs extension', async function () {
+			this.timeout(40000);
+			await wsdl2restExtension.install().catch((e) => expect.fail('Could not install extension: ' + e));
 			expect(await wsdl2restExtension.isInstalled()).to.be.true;
-		});
-
-		it('Extensions has expected title', async function () {
-			expect(await wsdl2restExtension.getTitle()).to.equal(packageData.displayName);
-		});
-
-		it('Owner of the extension is Red Hat', async function () {
-			expect(await wsdl2restExtension.getAuthor()).to.equal('Red Hat');
-		});
-
-		it('The extension has correct description', async function () {
-			expect(await wsdl2restExtension.getDescription()).to.equal(packageData.description);
-		});
-
-		it('Registered all commands', async function () {
-			const cmd = await new Workbench().openCommandPrompt() as InputBox;
-			await cmd.setText('>wsdl2rest');
-			// wait for suggestions to show
-			await DefaultWait.sleep(750);
-			const quickPicks = await cmd.getQuickPicks();
-			const suggestions = await Promise.all(quickPicks.map(q => q.getText()));
-			const commands = packageData.contributes.commands.map(x => x.title);
-
-			expect(suggestions).to.have.all.members(commands);
-			await cmd.cancel();
 		});
 	});
 }
