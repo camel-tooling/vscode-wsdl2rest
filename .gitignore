@@ -9,3 +9,4 @@ test-resources/
 .classpath
 .factorypath
 src/ui-test/runtimes/**/target
+.test-extensions

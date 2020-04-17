@@ -18,15 +18,17 @@
 import * as assert from 'assert';
 import * as extensionTest from './extension.test';
 import * as fs from 'fs';
+import * as installTest from './install.test';
 import * as marketplaceTest from './marketplace.test';
 import * as path from 'path';
 import * as webserver from '../test/app_soap';
 import { expect } from 'chai';
-import { Project, DefaultWait } from 'vscode-uitests-tooling';
+import { DefaultWait, Project } from 'vscode-uitests-tooling';
 import { projectPath } from './package_data';
 import { VSBrowser } from 'vscode-extension-tester';
 
 describe('All tests', function () {
+	installTest.test();
 	marketplaceTest.test();
 
 	describe('Extension tests', function() {
