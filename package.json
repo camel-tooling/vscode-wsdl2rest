@@ -34,7 +34,7 @@
         "Tool"
     ],
     "engines": {
-        "vscode": "^1.45.0"
+        "vscode": "^1.45.1"
     },
     "categories": [
         "Other"
