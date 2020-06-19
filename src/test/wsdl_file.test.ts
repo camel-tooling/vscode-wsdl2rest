@@ -123,8 +123,8 @@ suite("Wsdl2rest Extension Tests from wsdl file - spring - with no jaxws or jaxr
 
 		showInputBoxStub = sandbox.stub(vscode.window, 'showInputBox');
 		showInputBoxStub.onFirstCall().returns(srcPath);
-		showInputBoxStub.onSecondCall().returns(undefined);
-		showInputBoxStub.onThirdCall().returns(undefined);
+		showInputBoxStub.onSecondCall().returns('');
+		showInputBoxStub.onThirdCall().returns('');
 	});	
 
 	teardown(() => {
