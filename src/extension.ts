@@ -161,6 +161,9 @@ function askForUserInputs(useUrl: boolean): Promise<any> {
 				ignoreFocusOut: true,
 				validateInput: (text: string) => validateEndpointUrl(text)
 			});
+			if(jaxws === undefined) {
+				return reject("Action aborted at JAXWS Endpoint input box step.");
+			}
 			utils.printDebug("JAXWS Endpoint: " + jaxws);
 
 			jaxrs = await vscode.window.showInputBox({
@@ -169,6 +172,9 @@ function askForUserInputs(useUrl: boolean): Promise<any> {
 				ignoreFocusOut: true,
 				validateInput: (text: string) => validateEndpointUrl(text)
 			});
+			if(jaxrs === undefined){
+				return reject("Action aborted at JAXRS Endpoint input box step.");
+			}
 			utils.printDebug("JAXRS Endpoint: " + jaxrs);
 			return resolve();
 		} catch (error) {
