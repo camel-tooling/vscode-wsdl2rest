@@ -39,7 +39,7 @@ export function test() {
 			this.timeout(10000);
 			packageData = getPackageData();
 			marketplace = await Marketplace.open();
-			section = (await new SideBarView().getContent().getSection('Enabled')) as ExtensionsViewSection;
+			section = (await new SideBarView().getContent().getSection('Installed')) as ExtensionsViewSection;
 		});
 
 		after('Clear workspace', async function () {
@@ -52,6 +52,7 @@ export function test() {
 
 		it('Find extension', async function () {
 			this.timeout(10000);
+			await DefaultWait.sleep(1000);
 			wsdl2restExtension = await section.findItem(`@installed ${packageData.displayName}`);
 			expect(wsdl2restExtension).not.to.be.undefined;
 		});

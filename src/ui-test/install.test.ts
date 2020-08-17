@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+import { DefaultWait, Marketplace } from 'vscode-uitests-tooling';
 import {
 	EditorView,
 	ExtensionsViewItem,
@@ -23,7 +24,6 @@ import {
 } from 'vscode-extension-tester';
 import { expect } from 'chai';
 import { getPackageData, PackageData } from './package_data';
-import { Marketplace } from 'vscode-uitests-tooling';
 
 export function test() {
 	describe('Marketplace install test', function () {
@@ -37,7 +37,7 @@ export function test() {
 			this.timeout(10000);
 			packageData = getPackageData();
 			marketplace = await Marketplace.open();
-			section = (await new SideBarView().getContent().getSection('Enabled')) as ExtensionsViewSection;
+			section = (await new SideBarView().getContent().getSection('Installed')) as ExtensionsViewSection;
 		});
 
 		after('Clear workspace', async function () {
@@ -51,8 +51,9 @@ export function test() {
 
 		it('Find extension', async function () {
 			this.timeout(10000);
+			await DefaultWait.sleep(1000);
 			wsdl2restExtension = await section.findItem(packageData.displayName);
-			expect(wsdl2restExtension).not.to.be.undefined;
+			expect(wsdl2restExtension, 'Could not find extension').not.to.be.undefined;
 		});
 
 		it('Extension is not installed', async function () {
