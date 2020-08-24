@@ -7,7 +7,7 @@ before_install:
   - 'export PATH=./node_modules/.bin:$PATH'
   - 'npm install -g typescript'
   - 'npm install -g mocha'
-  - 'mvn install -f ./wsdl2rest/pom.xml'
+  - 'mvn install -f ./wsdl2rest/pom.xml -Dhttps.protocols=TLSv1,TLSv1.1,TLSv1.2'
 install:
   - 'npm install'
   # https://github.com/travis-ci/travis-ci/issues/8813
