@@ -23,7 +23,7 @@ node('rhel8'){
 		
 		sh "mvn install -f ./wsdl2rest/pom.xml"
 		sh "npm install --ignore-scripts"
-		sh "npm install"
+		sh "npm ci"
 		sh "npm run vscode:prepublish"
 	}
 
