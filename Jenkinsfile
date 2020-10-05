@@ -38,7 +38,7 @@ node('rhel8'){
 
 	stage('Package') {
         def packageJson = readJSON file: 'package.json'
-        sh "vsce package -o vscode-wsdl2rest-${packageJson.version}-${env.BUILD_NUMBER}.vsix"
+        sh "vsce package -o vscode-wsdl2rest-${packageJson.version}-${env.BUILD_NUMBER}.vsix --no-yarn"
         sh "npm pack && mv vscode-wsdl2rest-${packageJson.version}.tgz vscode-wsdl2rest-${packageJson.version}-${env.BUILD_NUMBER}.tgz"
 	}
 
