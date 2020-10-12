@@ -2,6 +2,8 @@
 
 All notable changes to the "vscode-wsdl2rest" extension will be documented in this file.
 
+## 0.0.13
+
 ## 0.0.12
 
 - Upgrade internal use of Wsdl2rest from 7.5.0 version to 7.7.0 version
