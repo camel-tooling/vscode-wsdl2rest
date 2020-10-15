@@ -3,7 +3,7 @@
 node('rhel8'){
 	stage('Checkout repo') {
 		deleteDir()
-		git url: 'https://github.com/camel-tooling/vscode-wsdl2rest'
+		git url: 'https://github.com/camel-tooling/vscode-wsdl2rest.git'
 	}
 
 	stage('Install requirements') {
