@@ -1,0 +1,67 @@
+version: 2.1
+
+job_default: &job_defaults
+  working_directory: ~/vscode-wsdl2rest
+  docker:
+    - image: circleci/openjdk:8-jdk-node-browsers
+
+common_env: &common_env
+  MAVEN_OPTS: -Xmx512m
+
+jobs:
+  build:
+    <<: *job_defaults
+    environment:
+      <<: *common_env
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}-{{ checksum "./wsdl2rest/pom.xml" }}
+      - run:
+          name: install-typescript
+          command: sudo npm install -g typescript
+      - run:
+          name: install-mocha
+          command: sudo npm install -g mocha
+      - run:
+          name: install-vsce
+          command: sudo npm install -g vsce
+      - run:
+          name: npm-ci
+          command: npm ci
+      - run:
+          name: vsce-package
+          command: vsce package
+      - run:
+          name: test
+          command: npm test
+      - run:
+          name: test UI
+          command: npm run ui-test
+      - store_artifacts:
+          name: save wsdl2rest.log
+          path: ./wsdl2rest.log
+      - save_cache:
+          key: dependency-cache-{{ checksum "package-lock.json" }}-{{ checksum "./wsdl2rest/pom.xml" }}
+          paths:
+            - ~/.m2
+            - ~/.npm
+      - store_artifacts:
+          path: ~/.config/Code/logs
+      - store_artifacts:
+          path: ~/.config/Code/User/workspaceStorage/
+      - when:
+          condition:
+            equal: [master, << pipeline.git.branch >>]
+          steps:
+            - sonarcloud/scan
+
+orbs:
+  sonarcloud: sonarsource/sonarcloud@1.0.2
+
+workflows:
+  version: 2
+  vscode-wsdl2rest:
+    jobs:
+      - build:
+          context: sonarcloud
