@@ -1,5 +1,7 @@
 [![GitHub tag](https://img.shields.io/github/tag/camel-tooling/vscode-wsdl2rest.svg?style=plastic)]()
 [![Build Status](https://travis-ci.com/camel-tooling/vscode-wsdl2rest.svg?branch=master)](https://travis-ci.com/camel-tooling/vscode-wsdl2rest)
+[![CircleCI](https://circleci.com/gh/circleci/circleci-docs.svg?style=shield)](https://circleci.com/gh/camel-tooling/vscode-wsdl2rest)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=vscode-wsdl2rest&metric=alert_status)](https://sonarcloud.io/dashboard?id=vscode-wsdl2rest)
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)]()
 [![Gitter](https://img.shields.io/gitter/room/camel-tooling/Lobby.js.svg)](https://gitter.im/camel-tooling/Lobby)
 
