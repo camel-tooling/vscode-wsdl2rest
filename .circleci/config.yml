@@ -55,6 +55,8 @@ jobs:
       - store_artifacts:
           path: /home/circleci/vscode-wsdl2rest/.ui-testing/
       - store_artifacts:
+          path: /tmp/wsdl2rest-projectbackup
+      - store_artifacts:
           name: Store VS Code logs of UI test
           path: /home/circleci/vscode-wsdl2rest/test-resources/settings/logs
       - store_artifacts:

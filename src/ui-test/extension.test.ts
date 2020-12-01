@@ -18,6 +18,7 @@
 import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
 import * as path from 'path';
+const tmp = require('tmp');
 import * as webServer from '../test/app_soap';
 import {
 	Command,
@@ -111,6 +112,9 @@ export function test(args: TestArguments) {
 		});
 
 		after('Project cleanup', async function () {
+			const projectBackup = path.join(tmp.dirSync(),'wsdl2rest-projectbackup', args.camelVersion, args.type, args.framework);
+			console.log('projectBackup'+ projectBackup);
+			fsExtra.copySync(WORKSPACE_PATH, projectBackup);
 			// remove all files from temp directory
 			for (const f of fs.readdirSync(WORKSPACE_PATH)) {
 				fsExtra.removeSync(path.join(WORKSPACE_PATH, f));
