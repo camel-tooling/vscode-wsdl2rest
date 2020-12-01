@@ -78,6 +78,7 @@ interface RuntimeOutput {
 const RUNTIME_FOLDER = path.join(projectPath, 'src', 'ui-test', 'runtimes');
 const WSDL_FILE = path.join(projectPath, 'src', 'test', 'address.wsdl');
 const WSDL_URL = webServer.getWSDLURL();
+const MAVEN_CALL_TIMEOUT = parseInt(process.env['WSDL2REST_MAVEN_CALL_TIMEOUT']) || 300000;
 
 // temp directory for testing
 export const WORKSPACE_PATH = path.join(projectPath, '.ui-testing');
@@ -278,7 +279,7 @@ export function test(args: TestArguments) {
 
 			it('Run projects', async function () {
 				// camel-maven-plugin must be downloaded
-				this.timeout(150000);
+				this.timeout(MAVEN_CALL_TIMEOUT);
 				maven = executeProject(args);
 				const data = await analyzeProject(maven);
 				const expectedRoutesCount = getExpectedNumberOfRoutes(args);
@@ -330,7 +331,8 @@ async function prepareMavenProject(args: TestArguments): Promise<number> {
 			'camel.version': args.camelVersion,
 			'camel.maven.plugin.version': args.camelMavenPluginVersion
 		},
-		cwd: WORKSPACE_PATH
+		cwd: WORKSPACE_PATH,
+		timeout: MAVEN_CALL_TIMEOUT
 	});
 	maven.spawn();
 
@@ -348,7 +350,7 @@ function executeProject(args: TestArguments): Maven {
 			'camel.maven.plugin.version': args.camelMavenPluginVersion
 		},
 		cwd: WORKSPACE_PATH,
-		timeout: 150000
+		timeout: MAVEN_CALL_TIMEOUT
 	});
 	maven.spawn();
 	maven.stdoutLineReader.on('line', console.log);
