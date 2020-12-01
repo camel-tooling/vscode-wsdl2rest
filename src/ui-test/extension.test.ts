@@ -114,7 +114,7 @@ export function test(args: TestArguments) {
 		after('Project cleanup', async function () {
 			const projectBackup = path.join('/tmp','wsdl2rest-projectbackup', args.camelVersion, args.type, args.framework);
 			fs.mkdirSync(projectBackup, {recursive: true});
-			console.log('projectBackup'+ projectBackup);
+			console.log('projectBackup: '+ projectBackup);
 			fsExtra.copySync(WORKSPACE_PATH, projectBackup);
 			// remove all files from temp directory
 			for (const f of fs.readdirSync(WORKSPACE_PATH)) {

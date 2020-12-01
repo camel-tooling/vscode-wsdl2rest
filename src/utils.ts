@@ -41,9 +41,9 @@ export const Options: vscode.OpenDialogOptions = {
 };
 
 export function printDebug(message: string) {
-	if (DEBUG_MODE) {
-		console.error("[DEBUG] " + message);
-	}	
+	//if (DEBUG_MODE) {
+		console.log("[DEBUG] " + message);
+	//}	
 }
 
 export function isAValidUrl(value: string): boolean {
