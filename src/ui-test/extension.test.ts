@@ -112,7 +112,7 @@ export function test(args: TestArguments) {
 		});
 
 		after('Project cleanup', async function () {
-			const projectBackup = path.join(tmp.dirSync(),'wsdl2rest-projectbackup', args.camelVersion, args.type, args.framework);
+			const projectBackup = path.join(tmp.dirSync().name,'wsdl2rest-projectbackup', args.camelVersion, args.type, args.framework);
 			fs.mkdirSync(projectBackup, {recursive: true});
 			console.log('projectBackup'+ projectBackup);
 			fsExtra.copySync(WORKSPACE_PATH, projectBackup);
