@@ -50,6 +50,8 @@ jobs:
           path: ~/.config/Code/logs
       - store_artifacts:
           path: ~/.config/Code/User/workspaceStorage/
+      - store_artifacts:
+          path: /home/circleci/vscode-wsdl2rest/.ui-testing/
       - when:
           condition:
             equal: [master, << pipeline.git.branch >>]
