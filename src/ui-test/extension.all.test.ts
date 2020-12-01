@@ -48,11 +48,10 @@ describe('All tests', function () {
 			webserver.stopWebService();
 		});
 
-		const testDataFolder = path.join(projectPath, 'src/ui-test/test-data');
-		for (const f of walk(testDataFolder)) {
+		for (const f of walk(path.join(projectPath, 'src/ui-test/test-data'))) {
 			assert(f.endsWith('.json'), `${f} is not json file`);
 			const fileContent = fs.readFileSync(f, { encoding: 'utf8' });
-			extensionTest.test(f.replace(testDataFolder, ''), JSON.parse(fileContent));
+			extensionTest.test(JSON.parse(fileContent));
 		}
 	});
 
@@ -83,11 +82,11 @@ function* walk(dir: string): Iterable<string> {
  * Creates new project and opens it in vscode
  */
 async function prepareWorkspace(browser: VSBrowser): Promise<Project> {
-	const project = new Project(extensionTest.TOP_LEVEL_WORKSPACE_PATH);
+	const project = new Project(extensionTest.WORKSPACE_PATH);
 	
-	expect(project.exists, `Test directory (${extensionTest.TOP_LEVEL_WORKSPACE_PATH}) already exists. In order to run this test, delete '${extensionTest.TOP_LEVEL_WORKSPACE_PATH}' directory.`).to.be.false;
+	expect(project.exists, `Test directory (${extensionTest.WORKSPACE_PATH}) already exists. In order to run this test, delete '${extensionTest.WORKSPACE_PATH}' directory.`).to.be.false;
 	project.create();
-	expect(project.exists, `Could not create test directory (${extensionTest.TOP_LEVEL_WORKSPACE_PATH}).`).to.be.true;
+	expect(project.exists, `Could not create test directory (${extensionTest.WORKSPACE_PATH}).`).to.be.true;
 
 	await project.open();
 	await DefaultWait.sleep(12000);

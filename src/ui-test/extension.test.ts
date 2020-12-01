@@ -81,12 +81,11 @@ const WSDL_URL = webServer.getWSDLURL();
 const MAVEN_CALL_TIMEOUT = 300000;
 
 // temp directory for testing
-export const TOP_LEVEL_WORKSPACE_PATH = path.join(projectPath, '.ui-testing');
+export const WORKSPACE_PATH = path.join(projectPath, '.ui-testing');
 
-export function test(testData: string, args: TestArguments) {
+export function test(args: TestArguments) {
 	// set of expected files from wsdl2rest process
-	const expectedFiles = new Set(getExpectedFileList(args).map(f => path.join(TOP_LEVEL_WORKSPACE_PATH, f)));
-	const workspacePath = path.join(TOP_LEVEL_WORKSPACE_PATH, testData);
+	const expectedFiles = new Set(getExpectedFileList(args).map(f => path.join(WORKSPACE_PATH, f)));
 
 	describe(`Extension test[${detailsString(args)}]`, function () {
 		let browser: VSBrowser;
@@ -103,7 +102,7 @@ export function test(testData: string, args: TestArguments) {
 			driver = browser.driver;
 
 			// copy runtime project to temp testing folder, so we can start test scenario
-			fsExtra.copySync(path.join(RUNTIME_FOLDER, args.framework), workspacePath);
+			fsExtra.copySync(path.join(RUNTIME_FOLDER, args.framework), WORKSPACE_PATH);
 
 			// ensure expected files do not exist yet
 			Array.from(expectedFiles).forEach(file => {
@@ -113,9 +112,9 @@ export function test(testData: string, args: TestArguments) {
 
 		after('Project cleanup', async function () {
 			// remove all files from temp directory
-			// for (const f of fs.readdirSync(workspacePath)) {
-			// 	fsExtra.removeSync(path.join(workspacePath, f));
-			// }
+			for (const f of fs.readdirSync(WORKSPACE_PATH)) {
+				fsExtra.removeSync(path.join(WORKSPACE_PATH, f));
+			}
 		});
 
 		const command: Command = findCommand(args, packageData);
@@ -261,7 +260,7 @@ export function test(testData: string, args: TestArguments) {
 
 			for (const file of Array.from(expectedFiles)) {
 				it(`Generated ${file}`, async function () {
-					expect(fs.existsSync(file), `File ${file} does not exist. `).to.be.true;
+					expect(fs.existsSync(file), `File ${file} does not exist`).to.be.true;
 				});
 			}
 		});
@@ -277,14 +276,14 @@ export function test(testData: string, args: TestArguments) {
 
 			it('Installs project', async function () {
 				this.timeout(0);
-				const exitCode = await prepareMavenProject(workspacePath, args);
+				const exitCode = await prepareMavenProject(args);
 				expect(exitCode).to.equal(0);
 			});
 
 			it('Run projects', async function () {
 				// camel-maven-plugin must be downloaded
 				this.timeout(MAVEN_CALL_TIMEOUT);
-				maven = executeProject(workspacePath, args);
+				maven = executeProject(args);
 				const data = await analyzeProject(maven);
 				const expectedRoutesCount = getExpectedNumberOfRoutes(args);
 
@@ -328,14 +327,14 @@ function detailsString(args: TestArguments): string {
 	return segments.join(', ');
 }
 
-async function prepareMavenProject(workspacePath: string, args: TestArguments): Promise<number> {
+async function prepareMavenProject(args: TestArguments): Promise<number> {
 	const maven = new Maven({
 		args: ['clean', 'install'],
 		properties: {
 			'camel.version': args.camelVersion,
 			'camel.maven.plugin.version': args.camelMavenPluginVersion
 		},
-		cwd: workspacePath,
+		cwd: WORKSPACE_PATH,
 		timeout: MAVEN_CALL_TIMEOUT
 	});
 	maven.spawn();
@@ -346,14 +345,14 @@ async function prepareMavenProject(workspacePath: string, args: TestArguments): 
 	return maven.wait();
 }
 
-function executeProject(workspacePath: string, args: TestArguments): Maven {
+function executeProject(args: TestArguments): Maven {
 	const maven = new Maven({
 		args: [mavenGoals[args.framework]],
 		properties: {
 			'camel.version': args.camelVersion,
 			'camel.maven.plugin.version': args.camelMavenPluginVersion
 		},
-		cwd: workspacePath,
+		cwd: WORKSPACE_PATH,
 		timeout: MAVEN_CALL_TIMEOUT
 	});
 	maven.spawn();
