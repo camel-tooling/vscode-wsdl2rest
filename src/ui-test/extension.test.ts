@@ -209,7 +209,7 @@ export function test(args: TestArguments) {
 				result = text.match(resultRegex);
 			} while (text === null || !result);
 
-			await output.clearText();
+			//await output.clearText();
 			expect(result.groups['code'], 'Output did not finish with code 0').to.equal('0');
 		});
 
