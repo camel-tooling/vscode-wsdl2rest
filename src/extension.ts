@@ -52,8 +52,8 @@ export function getStoragePath() : string {
 	return storagePath;
 }
 
-function callWsdl2RestViaUIAsync(useUrl: boolean): Promise<string> {
-	return new Promise <string> ( async (resolve, reject) => {
+function callWsdl2RestViaUIAsync(useUrl: boolean): Promise<void> {
+	return new Promise <void> ( async (resolve, reject) => {
 		await askForUserInputs(useUrl)
 		.then( () => {
 			callWsdl2Rest(wsdl2restExecutablePath)
@@ -103,7 +103,7 @@ function validatePath (text: string): string {
 	return null;
 }
 
-function askForUserInputs(useUrl: boolean): Promise<any> {
+function askForUserInputs(useUrl: boolean): Promise<void> {
 	return new Promise( async (resolve, reject) => {
 		try {
 			let fileUri;
