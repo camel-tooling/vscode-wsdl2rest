@@ -85,8 +85,8 @@ export const TOP_LEVEL_WORKSPACE_PATH = path.join(projectPath, '.ui-testing');
 
 export function test(testData: string, args: TestArguments) {
 	// set of expected files from wsdl2rest process
-	const workspacePath = path.join(TOP_LEVEL_WORKSPACE_PATH, testData); 
-	const expectedFiles = new Set(getExpectedFileList(args).map(f => path .join(workspacePath, f)));
+	const expectedFiles = new Set(getExpectedFileList(args).map(f => path.join(TOP_LEVEL_WORKSPACE_PATH, f)));
+	const workspacePath = path.join(TOP_LEVEL_WORKSPACE_PATH, testData);
 
 	describe(`Extension test[${detailsString(args)}]`, function () {
 		let browser: VSBrowser;
