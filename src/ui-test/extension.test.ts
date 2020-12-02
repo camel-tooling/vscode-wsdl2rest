@@ -264,7 +264,7 @@ export function test(args: TestArguments) {
 			});
 
 			for (const file of Array.from(expectedFiles)) {
-				it(`Generated ${file.replace('/', '_')}`, async function () {
+				it(`Generated ${file.split('/').join('_')}`, async function () {
 					console.log('Expecting this file to exist: '+ file);
 					expect(fs.existsSync(file), `File ${file} does not exist`).to.be.true;
 				});
