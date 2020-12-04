@@ -26,10 +26,8 @@ import {
 	projectPath
 } from './package_data';
 import {
-	CommandPalette,
 	DefaultWait,
 	Dialog,
-	Input,
 	LogAnalyzer,
 	Maven,
 	OutputViewExt
@@ -78,6 +76,7 @@ interface RuntimeOutput {
 const RUNTIME_FOLDER = path.join(projectPath, 'src', 'ui-test', 'runtimes');
 const WSDL_FILE = path.join(projectPath, 'src', 'test', 'address.wsdl');
 const WSDL_URL = webServer.getWSDLURL();
+const MAVEN_CALL_TIMEOUT = 300000;
 
 // temp directory for testing
 export const WORKSPACE_PATH = path.join(projectPath, '.ui-testing');
@@ -140,7 +139,6 @@ export function test(args: TestArguments) {
 					break;
 				default:
 					expect.fail('Unsupported option');
-					return null;
 			}
 		});
 
@@ -278,7 +276,7 @@ export function test(args: TestArguments) {
 
 			it('Run projects', async function () {
 				// camel-maven-plugin must be downloaded
-				this.timeout(150000);
+				this.timeout(MAVEN_CALL_TIMEOUT);
 				maven = executeProject(args);
 				const data = await analyzeProject(maven);
 				const expectedRoutesCount = getExpectedNumberOfRoutes(args);
@@ -300,7 +298,6 @@ function findCommand(args: TestArguments, packageData: PackageData): Command {
 			return packageData.contributes.commands.find(x => x.command.endsWith('local'));
 		default:
 			expect.fail('Unsupported option');
-			return null;
 	}
 }
 
@@ -316,7 +313,6 @@ function detailsString(args: TestArguments): string {
 			break;
 		default:
 			expect.fail('Unsupported option');
-			return null;
 	}
 	segments.push(args.framework);
 	segments.push(`camel = ${args.camelVersion}`);
@@ -348,7 +344,7 @@ function executeProject(args: TestArguments): Maven {
 			'camel.maven.plugin.version': args.camelMavenPluginVersion
 		},
 		cwd: WORKSPACE_PATH,
-		timeout: 150000
+		timeout: MAVEN_CALL_TIMEOUT
 	});
 	maven.spawn();
 	maven.stdoutLineReader.on('line', console.log);
@@ -376,7 +372,6 @@ function getExpectedNumberOfRoutes(args: TestArguments): number {
 			return 2;
 		default:
 			expect.fail('Unsupported option');
-			return -1;
 	}
 }
 
@@ -388,7 +383,6 @@ function getCamelContextPath(args: TestArguments): string {
 			return 'src/main/resources/OSGI-INF/blueprint/blueprint.xml';
 		default:
 			expect.fail('Unsupported option');
-			return null;
 	}
 }
 
@@ -430,7 +424,6 @@ function getExpectedFileList(args: TestArguments): string[] {
 			break;
 		default:
 			expect.fail('Unsupported option');
-			return null;
 	}
 	return files;
 }
