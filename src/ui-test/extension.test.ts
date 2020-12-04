@@ -18,6 +18,7 @@
 import * as fs from 'fs';
 import * as fsExtra from 'fs-extra';
 import * as path from 'path';
+const tmp = require('tmp');
 import * as webServer from '../test/app_soap';
 import {
 	Command,
@@ -78,6 +79,7 @@ interface RuntimeOutput {
 const RUNTIME_FOLDER = path.join(projectPath, 'src', 'ui-test', 'runtimes');
 const WSDL_FILE = path.join(projectPath, 'src', 'test', 'address.wsdl');
 const WSDL_URL = webServer.getWSDLURL();
+const MAVEN_CALL_TIMEOUT = 300000;
 
 // temp directory for testing
 export const WORKSPACE_PATH = path.join(projectPath, '.ui-testing');
@@ -110,6 +112,10 @@ export function test(args: TestArguments) {
 		});
 
 		after('Project cleanup', async function () {
+			const projectBackup = path.join('/tmp','wsdl2rest-projectbackup', args.camelVersion, args.type, args.framework);
+			fs.mkdirSync(projectBackup, {recursive: true});
+			console.log('projectBackup: '+ projectBackup);
+			fsExtra.copySync(WORKSPACE_PATH, projectBackup);
 			// remove all files from temp directory
 			for (const f of fs.readdirSync(WORKSPACE_PATH)) {
 				fsExtra.removeSync(path.join(WORKSPACE_PATH, f));
@@ -207,7 +213,10 @@ export function test(args: TestArguments) {
 
 				result = text.match(resultRegex);
 			} while (text === null || !result);
-
+			
+			console.log('Log WSDLRest channel before clearing it');
+			console.log(text);
+			
 			await output.clearText();
 			expect(result.groups['code'], 'Output did not finish with code 0').to.equal('0');
 		});
@@ -255,7 +264,8 @@ export function test(args: TestArguments) {
 			});
 
 			for (const file of Array.from(expectedFiles)) {
-				it(`Generated ${file}`, async function () {
+				it(`Generated ${file.split('/').join('_')}`, async function () {
+					console.log('Expecting this file to exist: '+ file);
 					expect(fs.existsSync(file), `File ${file} does not exist`).to.be.true;
 				});
 			}
@@ -278,7 +288,7 @@ export function test(args: TestArguments) {
 
 			it('Run projects', async function () {
 				// camel-maven-plugin must be downloaded
-				this.timeout(150000);
+				this.timeout(MAVEN_CALL_TIMEOUT);
 				maven = executeProject(args);
 				const data = await analyzeProject(maven);
 				const expectedRoutesCount = getExpectedNumberOfRoutes(args);
@@ -330,7 +340,8 @@ async function prepareMavenProject(args: TestArguments): Promise<number> {
 			'camel.version': args.camelVersion,
 			'camel.maven.plugin.version': args.camelMavenPluginVersion
 		},
-		cwd: WORKSPACE_PATH
+		cwd: WORKSPACE_PATH,
+		timeout: MAVEN_CALL_TIMEOUT
 	});
 	maven.spawn();
 
@@ -348,7 +359,7 @@ function executeProject(args: TestArguments): Maven {
 			'camel.maven.plugin.version': args.camelMavenPluginVersion
 		},
 		cwd: WORKSPACE_PATH,
-		timeout: 150000
+		timeout: MAVEN_CALL_TIMEOUT
 	});
 	maven.spawn();
 	maven.stdoutLineReader.on('line', console.log);
