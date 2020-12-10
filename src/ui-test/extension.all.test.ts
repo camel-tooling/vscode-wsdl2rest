@@ -23,9 +23,11 @@ import * as marketplaceTest from './marketplace.test';
 import * as path from 'path';
 import * as webserver from '../test/app_soap';
 import { expect } from 'chai';
-import { DefaultWait, Project } from 'vscode-uitests-tooling';
+import { Project } from 'vscode-uitests-tooling';
 import { projectPath } from './package_data';
 import { VSBrowser } from 'vscode-extension-tester';
+
+const OPEN_CLOSE_TIMEOUT = 100000;
 
 describe('All tests', function () {
 	installTest.test();
@@ -37,14 +39,14 @@ describe('All tests', function () {
 		let workspace: Project;
 
 		before('Setup environment', async function() {
-			this.timeout(32000);
+			this.timeout(OPEN_CLOSE_TIMEOUT);
 			browser = VSBrowser.instance;
 			workspace = await prepareWorkspace(browser);
 			webserver.startWebService();
 		});
 
 		after('Clear environment', async function() {
-			this.timeout(32000);
+			this.timeout(OPEN_CLOSE_TIMEOUT);
 			await clearWorkspace(workspace);
 			webserver.stopWebService();
 		});
@@ -92,7 +94,7 @@ async function prepareWorkspace(browser: VSBrowser): Promise<Project> {
 	project.create();
 	expect(project.exists, `Could not create test directory (${extensionTest.WORKSPACE_PATH}).`).to.be.true;
 
-	await project.open(30000);
+	await project.open(OPEN_CLOSE_TIMEOUT);
 	return project;
 }
 
@@ -101,6 +103,6 @@ async function prepareWorkspace(browser: VSBrowser): Promise<Project> {
  * @param workspace project object returned from `prepareWorkspace` function
  */
 async function clearWorkspace(workspace: Project): Promise<void> {
-	await workspace.close(30000);
+	await workspace.close(OPEN_CLOSE_TIMEOUT);
 	await workspace.delete();
 }
