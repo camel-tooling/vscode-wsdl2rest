@@ -44,6 +44,7 @@ describe('All tests', function () {
 		});
 
 		after('Clear environment', async function() {
+			this.timeout(32000);
 			await clearWorkspace(workspace);
 			webserver.stopWebService();
 		});
@@ -84,13 +85,14 @@ function* walk(dir: string): Iterable<string> {
 async function prepareWorkspace(browser: VSBrowser): Promise<Project> {
 	const project = new Project(extensionTest.WORKSPACE_PATH);
 	
-	expect(project.exists, `Test directory (${extensionTest.WORKSPACE_PATH}) already exists. In order to run this test, delete '${extensionTest.WORKSPACE_PATH}' directory.`).to.be.false;
+	if (project.exists) {
+		await project.delete();
+	}
+
 	project.create();
 	expect(project.exists, `Could not create test directory (${extensionTest.WORKSPACE_PATH}).`).to.be.true;
 
-	await project.open();
-	await DefaultWait.sleep(12000);
-
+	await project.open(30000);
 	return project;
 }
 
@@ -99,6 +101,6 @@ async function prepareWorkspace(browser: VSBrowser): Promise<Project> {
  * @param workspace project object returned from `prepareWorkspace` function
  */
 async function clearWorkspace(workspace: Project): Promise<void> {
-	await workspace.close();
+	await workspace.close(30000);
 	await workspace.delete();
 }
