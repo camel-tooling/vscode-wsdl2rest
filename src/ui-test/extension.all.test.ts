@@ -25,7 +25,7 @@ import * as webserver from '../test/app_soap';
 import { expect } from 'chai';
 import { DefaultWait, Project } from 'vscode-uitests-tooling';
 import { projectPath } from './package_data';
-import { VSBrowser } from 'vscode-extension-tester';
+import { ActivityBar, VSBrowser } from 'vscode-extension-tester';
 
 describe('All tests', function () {
 	installTest.test();
@@ -89,7 +89,14 @@ async function prepareWorkspace(browser: VSBrowser): Promise<Project> {
 	expect(project.exists, `Could not create test directory (${extensionTest.WORKSPACE_PATH}).`).to.be.true;
 
 	await project.open();
-	await DefaultWait.sleep(12000);
+	
+	const activityBar = new ActivityBar();
+	const explorerView = await activityBar.getViewControl("Explorer").openView();
+	browser.driver.wait(async function() {
+		const text = await explorerView.getText();
+		const folderName = extensionTest.WORKSPACE_PATH.substring(extensionTest.WORKSPACE_PATH.lastIndexOf('/') + 1);
+		return text.toLowerCase().includes(folderName);
+	});
 
 	return project;
 }
