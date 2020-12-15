@@ -43,11 +43,10 @@ export function test() {
 		});
 
 		after('Clear workspace', async function () {
+			this.timeout(20000);
 			await section.clearSearch();
-			await Promise.all([
-				marketplace.close(),
-				new EditorView().closeAllEditors()
-			]);
+			await marketplace.close();
+			await new EditorView().closeAllEditors();
 		});
 
 		it('Find extension', async function () {

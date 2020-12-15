@@ -20,10 +20,12 @@ import {
 	EditorView,
 	ExtensionsViewItem,
 	ExtensionsViewSection,
-	SideBarView
+	SideBarView,
+	VSBrowser,
 } from 'vscode-extension-tester';
 import { expect } from 'chai';
 import { getPackageData, PackageData } from './package_data';
+import * as fs from 'fs';
 
 export function test() {
 	describe('Marketplace install test', function () {
@@ -41,12 +43,10 @@ export function test() {
 		});
 
 		after('Clear workspace', async function () {
-			this.timeout(10000);
+			this.timeout(120000);
 			await section.clearSearch();
-			await Promise.all([
-				marketplace.close(),
-				new EditorView().closeAllEditors()
-			]);
+			await marketplace.close();
+			await new EditorView().closeAllEditors();
 		});
 
 		it('Find extension', async function () {
@@ -61,9 +61,9 @@ export function test() {
 		});
 
 		it('Installs extension', async function () {
-			this.timeout(40000);
+			this.timeout(80000);
 			await wsdl2restExtension.install().catch((e) => expect.fail('Could not install extension: ' + e));
-			expect(await wsdl2restExtension.isInstalled()).to.be.true;
+			expect(await wsdl2restExtension.isInstalled(), 'Could not install extension: ' + packageData.displayName).to.be.true;
 		});
 	});
 }

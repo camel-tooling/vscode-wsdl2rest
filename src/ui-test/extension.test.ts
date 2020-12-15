@@ -208,8 +208,8 @@ export function test(args: TestArguments) {
 				result = text.match(resultRegex);
 			} while (text === null || !result);
 
+			expect(result.groups['code'], 'Output did not finish with code 0.\nReason:\n' + await output.getText()).to.equal('0');
 			await output.clearText();
-			expect(result.groups['code'], 'Output did not finish with code 0').to.equal('0');
 		});
 
 		describe('Generated all files', function () {
