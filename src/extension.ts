@@ -23,7 +23,7 @@ import * as path from 'path';
 import * as requirements from './requirements';
 import * as utils from './utils';
 import * as vscode from 'vscode';
-import * as fileUrl from 'file-url';
+import fileUrl from 'file-url';
 
 let outputChannel: vscode.OutputChannel;
 let wsdl2restProcess: child_process.ChildProcess;
