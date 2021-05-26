@@ -15,45 +15,36 @@
  * limitations under the License.
  */
 
-import { DefaultWait, Marketplace } from 'vscode-uitests-tooling';
+import { after, before, DefaultWait, Marketplace, Workbench } from 'vscode-uitests-tooling';
 import {
 	EditorView,
 	ExtensionsViewItem,
-	ExtensionsViewSection,
-	InputBox,
-	SideBarView,
-	Workbench,
+	InputBox
 } from 'vscode-extension-tester';
 import { expect } from 'chai';
 import { getPackageData, PackageData } from './package_data';
 
 export function test() {
 	describe('Marketplace extension test', function () {
-		this.timeout(3500);
+		this.timeout(60000);
 		let packageData: PackageData;
 		let marketplace: Marketplace;
-		let section: ExtensionsViewSection;
 		let wsdl2restExtension: ExtensionsViewItem;
 
 		before('Init tester and get package data', async function () {
-			this.timeout(10000);
+			this.retries(3);
 			packageData = getPackageData();
-			marketplace = await Marketplace.open();
-			section = (await new SideBarView().getContent().getSection('Installed')) as ExtensionsViewSection;
+			marketplace = await Marketplace.open(this.timeout() - 1000);
 		});
 
 		after('Clear workspace', async function () {
-			await section.clearSearch();
-			await Promise.all([
-				marketplace.close(),
-				new EditorView().closeAllEditors()
-			]);
+			await marketplace?.clearSearch(this.timeout() - 1000);
+			await new EditorView().closeAllEditors();
 		});
 
 		it('Find extension', async function () {
-			this.timeout(10000);
 			await DefaultWait.sleep(1000);
-			wsdl2restExtension = await section.findItem(`@installed ${packageData.displayName}`);
+			wsdl2restExtension = await marketplace.findExtension(`@installed ${packageData.displayName}`, this.timeout() - 1000);
 			expect(wsdl2restExtension).not.to.be.undefined;
 		});
 

@@ -15,36 +15,32 @@
  * limitations under the License.
  */
 
-import * as assert from 'assert';
-import * as extensionTest from './extension.test';
-import * as fs from 'fs';
-import * as installTest from './install.test';
-import * as marketplaceTest from './marketplace.test';
-import * as path from 'path';
-import * as webserver from '../test/app_soap';
-import { expect } from 'chai';
-import { DefaultWait, Project } from 'vscode-uitests-tooling';
-import { projectPath } from './package_data';
-import { VSBrowser } from 'vscode-extension-tester';
+ import * as assert from 'assert';
+ import * as extensionTest from './extension.test';
+ import * as fs from 'fs';
+ import * as installTest from './install.test';
+ import * as marketplaceTest from './marketplace.test';
+ import * as path from 'path';
+ import * as webserver from '../test/app_soap';
+ import { projectPath } from './package_data';
+ import { EditorView, VSBrowser } from 'vscode-extension-tester';
+ import { after, before } from "vscode-uitests-tooling";
 
 describe('All tests', function () {
 	installTest.test();
 	marketplaceTest.test();
 
-	describe('Extension tests', function() {
-		this.timeout(4000);
+	describe('Extension tests', function () {
+		this.timeout(60000);
 		let browser: VSBrowser;
-		let workspace: Project;
 
-		before('Setup environment', async function() {
-			this.timeout(32000);
+		before('Setup environment', async function () {
 			browser = VSBrowser.instance;
-			workspace = await prepareWorkspace(browser);
 			webserver.startWebService();
+			await new EditorView().closeAllEditors();
 		});
 
-		after('Clear environment', async function() {
-			await clearWorkspace(workspace);
+		after('Clear environment', async function () {
 			webserver.stopWebService();
 		});
 
@@ -76,29 +72,4 @@ function* walk(dir: string): Iterable<string> {
 			yield file;
 		}
 	}
-}
-
-/**
- * Creates new project and opens it in vscode
- */
-async function prepareWorkspace(browser: VSBrowser): Promise<Project> {
-	const project = new Project(extensionTest.WORKSPACE_PATH);
-	
-	expect(project.exists, `Test directory (${extensionTest.WORKSPACE_PATH}) already exists. In order to run this test, delete '${extensionTest.WORKSPACE_PATH}' directory.`).to.be.false;
-	project.create();
-	expect(project.exists, `Could not create test directory (${extensionTest.WORKSPACE_PATH}).`).to.be.true;
-
-	await project.open();
-	await DefaultWait.sleep(12000);
-
-	return project;
-}
-
-/**
- * Closes and deletes project
- * @param workspace project object returned from `prepareWorkspace` function
- */
-async function clearWorkspace(workspace: Project): Promise<void> {
-	await workspace.close();
-	await workspace.delete();
 }

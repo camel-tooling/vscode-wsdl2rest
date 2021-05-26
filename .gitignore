@@ -10,3 +10,4 @@ test-resources/
 .factorypath
 src/ui-test/runtimes/**/target
 .test-extensions
+.ui-testing
