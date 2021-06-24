@@ -10,6 +10,5 @@
     "workbench.editor.enablePreview": false,
     "window.restoreFullscreen": true,
     "window.newWindowDimensions": "maximized",
-    "window.title": "${dirty}${activeEditorLong}${separator}${rootPath}${separator}${appName}",
-    "security.workspace.trust.enabled": false
+    "window.title": "${dirty}${activeEditorLong}${separator}${rootPath}${separator}${appName}"
 }
