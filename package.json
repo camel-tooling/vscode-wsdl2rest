@@ -100,7 +100,7 @@
         "fs": "^0.0.1-security",
         "fs-extra": "^10.0.0",
         "path": "^0.12.7",
-        "path-exists": "^4.0.0",
+        "path-exists": "^5.0.0",
         "soap": "^0.40.0",
         "util": "^0.12.4"
     }
