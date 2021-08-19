@@ -95,7 +95,7 @@
     "dependencies": {
         "child_process": "^1.0.2",
         "expand-home-dir": "^0.0.3",
-        "file-url": "^3.0.0",
+        "file-url": "^4.0.0",
         "find-java-home": "^1.2.2",
         "fs": "^0.0.1-security",
         "fs-extra": "^10.0.0",
