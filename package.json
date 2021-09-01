@@ -3,7 +3,7 @@
     "displayName": "wsdl2rest by Red Hat",
     "description": "A VS Code extension supporting wsdl2rest via Camel Rest DSL",
     "license": "Apache-2.0",
-    "version": "0.0.13",
+    "version": "0.0.14",
     "publisher": "redhat",
     "icon": "icons/icon128.png",
     "preview": true,
