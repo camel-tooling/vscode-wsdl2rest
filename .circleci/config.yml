@@ -3,7 +3,7 @@ version: 2.1
 job_default: &job_defaults
   working_directory: ~/vscode-wsdl2rest
   docker:
-    - image: circleci/openjdk:8-jdk-node-browsers
+    - image: cimg/openjdk:8.0-browsers
 
 common_env: &common_env
   MAVEN_OPTS: -Xmx512m
