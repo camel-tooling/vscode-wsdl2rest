@@ -68,7 +68,7 @@
         "ui-test": "node out/ui-test/uitest_runner.js"
     },
     "devDependencies": {
-        "@types/chai": "^4.2.21",
+        "@types/chai": "^4.2.22",
         "@types/fs-extra": "^9.0.12",
         "@types/mocha": "^9.0.0",
         "@types/node": "^16.9.4",
