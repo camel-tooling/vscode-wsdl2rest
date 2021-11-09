@@ -4,6 +4,8 @@ All notable changes to the "vscode-wsdl2rest" extension will be documented in th
 
 ## 0.0.14
 
+- This VS Code extension is now deprecated.
+
 ## 0.0.13
 
 - Upgrade internal use of Wsdl2rest from 7.7.0 version to 7.9.0 version
