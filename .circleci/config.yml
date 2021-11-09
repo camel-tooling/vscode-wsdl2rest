@@ -19,13 +19,13 @@ jobs:
           key: dependency-cache-{{ checksum "package-lock.json" }}-{{ checksum "./wsdl2rest/pom.xml" }}
       - run:
           name: install-typescript
-          command: sudo npm install -g typescript
+          command: npm install --prefix=$HOME/.local -g typescript
       - run:
           name: install-mocha
-          command: sudo npm install -g mocha
+          command: npm install --prefix=$HOME/.local -g mocha
       - run:
           name: install-vsce
-          command: sudo npm install -g vsce
+          command: npm install --prefix=$HOME/.local -g vsce
       - run:
           name: npm-ci
           command: npm ci
