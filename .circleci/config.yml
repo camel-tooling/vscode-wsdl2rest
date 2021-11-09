@@ -3,7 +3,7 @@ version: 2.1
 job_default: &job_defaults
   working_directory: ~/vscode-wsdl2rest
   docker:
-    - image: circleci/openjdk:8-jdk-node-browsers
+    - image: circleci/openjdk:8-jdk-browsers
 
 common_env: &common_env
   MAVEN_OPTS: -Xmx512m
@@ -17,6 +17,14 @@ jobs:
       - checkout
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}-{{ checksum "./wsdl2rest/pom.xml" }}
+      - run:
+          name: Install Node environment
+          command: |
+            curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+            sudo apt-get install -y nodejs
+      - run:
+          name: Setup environment for global npm dependencies
+          command: echo 'export PATH=$HOME/.local/bin:$PATH' >> $BASH_ENV
       - run:
           name: install-typescript
           command: npm install --prefix=$HOME/.local -g typescript
