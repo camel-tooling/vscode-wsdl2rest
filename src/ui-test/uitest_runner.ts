@@ -35,8 +35,7 @@ async function main(): Promise<void> {
 
     const tester = new ExTester(storageFolder, releaseType, extensionFolder);
 
-    await tester.downloadCode(vscodeVersion);
-    await tester.downloadChromeDriver(vscodeVersion);
+    await tester.setupRequirements({vscodeVersion: vscodeVersion})
 
     await tester.runTests('out/ui-test/extension.all.test.js', {
         vscodeVersion,

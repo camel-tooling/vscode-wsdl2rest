@@ -18,24 +18,18 @@
  import * as assert from 'assert';
  import * as extensionTest from './extension.test';
  import * as fs from 'fs';
- import * as installTest from './install.test';
- import * as marketplaceTest from './marketplace.test';
  import * as path from 'path';
  import * as webserver from '../test/app_soap';
  import { projectPath } from './package_data';
- import { EditorView, VSBrowser } from 'vscode-extension-tester';
+ import { EditorView } from 'vscode-extension-tester';
  import { after, before } from "vscode-uitests-tooling";
 
 describe('All tests', function () {
-	installTest.test();
-	marketplaceTest.test();
 
 	describe('Extension tests', function () {
 		this.timeout(60000);
-		let browser: VSBrowser;
 
 		before('Setup environment', async function () {
-			browser = VSBrowser.instance;
 			webserver.startWebService();
 			await new EditorView().closeAllEditors();
 		});

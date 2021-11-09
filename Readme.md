@@ -4,6 +4,8 @@
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)]()
 [![Gitter](https://img.shields.io/gitter/room/camel-tooling/Lobby.js.svg)](https://gitter.im/camel-tooling/Lobby)
 
+This VS Code extension is now deprecated.
+
 # WSDL to Camel Rest DSL for Visual Studio Code
 This preview release of the extension adds WSDL to REST support to [Visual Studio Code](https://code.visualstudio.com/).
 
