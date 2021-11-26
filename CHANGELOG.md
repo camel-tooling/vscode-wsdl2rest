@@ -2,6 +2,8 @@
 
 All notable changes to the "vscode-wsdl2rest" extension will be documented in this file.
 
+## 0.0.15
+
 ## 0.0.14
 
 - This VS Code extension is now deprecated.
