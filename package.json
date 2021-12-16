@@ -3,7 +3,7 @@
     "displayName": "Deprecated - wsdl2rest by Red Hat",
     "description": "Deprecated - A VS Code extension supporting wsdl2rest via Camel Rest DSL",
     "license": "Apache-2.0",
-    "version": "0.0.15",
+    "version": "0.0.16",
     "publisher": "redhat",
     "icon": "icons/icon128.png",
     "preview": true,
